@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Petra Energy — Company Portal</title>
+<script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
+<style>
+:root {
+  --red:#C0111F; --red-dark:#8C0C17; --red-mid:#A50F1A;
+  --red-pale:#FFF0F1; --red-pale2:#FFE0E2;
+  --bg:#FFFFFF; --bg-page:#F2F2F2; --bg-card:#FFFFFF;
+  --border:#E0D8D8; --border-light:#EDE8E8;
+  --text:#1A1A1A; --text2:#444; --text-muted:#888;
+  --green:#1A7A3C; --green-bg:#E8F5ED;
+  --amber:#9A5200; --amber-bg:#FFF3E0;
+  --blue:#1A4A8C; --blue-bg:#EAF2FF;
+  --shadow:0 2px 12px rgba(0,0,0,0.08);
+  --shadow-hover:0 6px 24px rgba(192,17,31,0.15);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg-page);color:var(--text);font-size:14px;line-height:1.5;overflow-x:hidden;}
+
+/* ── TOPBAR ── */
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:300;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-mark{width:32px;height:32px;background:var(--red);border-radius:6px;display:flex;align-items:center;justify-content:center;}
+.logo-mark svg{width:18px;height:18px;fill:white;}
+.logo-name{font-size:17px;font-weight:700;color:var(--red);letter-spacing:-.4px;}
+.logo-sub{font-size:10px;color:var(--text-muted);letter-spacing:.8px;text-transform:uppercase;display:block;line-height:1;}
+.tb-center{display:flex;align-items:center;gap:4px;}
+.tb-search{display:flex;align-items:center;gap:8px;border:1.5px solid var(--border);border-radius:20px;padding:6px 16px;cursor:text;background:#F8F4F4;width:280px;transition:border-color .2s,box-shadow .2s;}
+.tb-search:focus-within{border-color:var(--red);box-shadow:0 0 0 3px rgba(192,17,31,.08);}
+.tb-search input{border:none;background:none;outline:none;font-size:13px;color:var(--text);font-family:inherit;width:100%;}
+.tb-search input::placeholder{color:var(--text-muted);}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.tb-btn{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1.5px solid var(--border);font-size:15px;background:#fff;position:relative;transition:border-color .2s;}
+.tb-btn:hover{border-color:var(--red);}
+.tb-badge{position:absolute;top:-2px;right:-2px;width:14px;height:14px;background:var(--red);border-radius:50%;font-size:9px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;border:1.5px solid #fff;}
+.tb-avatar{width:34px;height:34px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;cursor:pointer;}
+.tb-div{width:1px;height:22px;background:var(--border);}
+.tb-date{font-size:12px;color:var(--text-muted);white-space:nowrap;}
+
+/* ── NAVBAR ── */
+.navbar{background:#fff;border-bottom:2px solid var(--border);padding:0 24px;display:flex;align-items:center;overflow-x:auto;scrollbar-width:none;position:sticky;top:52px;z-index:200;}
+.navbar::-webkit-scrollbar{display:none;}
+.nav-item{display:inline-flex;align-items:center;gap:5px;padding:10px 15px;font-size:13px;font-weight:500;color:var(--text2);border-bottom:3px solid transparent;white-space:nowrap;cursor:pointer;text-decoration:none;transition:color .15s,border-color .15s;margin-bottom:-2px;}
+.nav-item:hover{color:var(--red);}
+.nav-item.active{color:var(--red);border-bottom-color:var(--red);font-weight:700;}
+.nav-dot{width:5px;height:5px;background:var(--red);border-radius:50%;}
+
+/* ── PAGE ── */
+.page{max-width:1340px;margin:0 auto;padding:20px 20px;}
+
+/* ── WELCOME BANNER ── */
+.welcome{background:var(--red);border-radius:10px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;}
+.w-left{display:flex;align-items:center;gap:12px;}
+.w-avatar{width:42px;height:42px;background:rgba(255,255,255,.25);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;border:2px solid rgba(255,255,255,.4);flex-shrink:0;}
+.w-name{color:#fff;font-weight:700;font-size:15px;display:block;line-height:1.2;}
+.w-sub{color:rgba(255,255,255,.82);font-size:12px;}
+.w-right{display:flex;align-items:center;gap:20px;flex-shrink:0;}
+.w-stat{text-align:center;}
+.w-stat-val{font-size:20px;font-weight:300;color:#fff;line-height:1;}
+.w-stat-lbl{font-size:10px;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.5px;}
+.w-divider{width:1px;height:36px;background:rgba(255,255,255,.3);}
+.weather-widget{display:flex;align-items:center;gap:8px;color:#fff;}
+.ww-temp{font-size:22px;font-weight:300;}
+.ww-loc{font-size:11px;color:rgba(255,255,255,.75);}
+
+/* ── SPECIAL MENTION ── */
+.special{background:linear-gradient(135deg,#FFFBF0,#FFF3D8);border:1.5px solid #F0C060;border-radius:10px;padding:12px 18px;display:flex;align-items:center;gap:14px;margin-bottom:16px;cursor:pointer;transition:box-shadow .2s;}
+.special:hover{box-shadow:0 4px 16px rgba(240,192,96,.3);}
+.sp-icon{font-size:36px;flex-shrink:0;}
+.sp-label{font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:#A85A00;}
+.sp-name{font-size:15px;font-weight:700;color:var(--text);}
+.sp-reason{font-size:12px;color:var(--text2);margin-top:2px;}
+.sp-dept{font-size:11px;color:var(--text-muted);margin-top:2px;}
+
+/* ── TICKER ── */
+.ticker{background:var(--text);border-radius:8px;display:flex;align-items:stretch;overflow:hidden;margin-bottom:16px;height:36px;}
+.ticker-label{background:var(--red);color:#fff;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;padding:0 14px;display:flex;align-items:center;white-space:nowrap;flex-shrink:0;}
+.ticker-body{overflow:hidden;flex:1;display:flex;align-items:center;}
+.ticker-inner{display:inline-flex;white-space:nowrap;animation:tick 70s linear infinite;}
+.ticker-inner:hover{animation-play-state:paused;}
+@keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.tick-item{padding:0 28px;font-size:12px;color:rgba(255,255,255,.85);display:inline-block;}
+.tick-sep{color:var(--red);margin-right:6px;}
+
+/* ── MAIN GRID ── */
+.main-grid{display:grid;grid-template-columns:1fr 308px;gap:18px;align-items:start;}
+.content-col{min-width:0;}
+.sidebar-col{display:flex;flex-direction:column;gap:14px;min-width:0;}
+
+/* ── SECTION HEADER ── */
+.sec{margin-bottom:20px;}
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--red);}
+.sec-title{font-size:13px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.8px;display:flex;align-items:center;gap:7px;}
+.sec-more{font-size:12px;color:var(--red);text-decoration:none;font-weight:600;cursor:pointer;padding:4px 10px;border:1.5px solid var(--red-pale2);border-radius:12px;transition:background .15s;}
+.sec-more:hover{background:var(--red-pale);}
+
+/* ── NEWS TABS ── */
+.news-tabs{display:flex;gap:4px;margin-bottom:12px;border-bottom:1px solid var(--border);}
+.news-tab{padding:8px 16px;font-size:13px;font-weight:500;color:var(--text-muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px;transition:color .15s,border-color .15s;user-select:none;}
+.news-tab:hover{color:var(--red);}
+.news-tab.active{color:var(--red);border-bottom-color:var(--red);font-weight:700;}
+
+/* ── TILE GRID (mixed sizes) ── */
+.tile-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;}
+
+/* tile size variants */
+.tile{background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color .2s,box-shadow .2s,transform .18s;text-decoration:none;color:inherit;display:flex;flex-direction:column;position:relative;}
+.tile:hover{border-color:var(--red);box-shadow:var(--shadow-hover);transform:translateY(-2px);}
+.tile.big{grid-column:span 3;grid-row:span 2;}
+.tile.med{grid-column:span 2;grid-row:span 1;}
+.tile.sm{grid-column:span 2;grid-row:span 1;}
+.tile.wide{grid-column:span 4;grid-row:span 1;}
+.tile.tall{grid-column:span 2;grid-row:span 2;}
+
+/* tile image */
+.tile-img{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--red-dark),var(--red));}
+.tile.big .tile-img{height:220px;}
+.tile.med .tile-img,.tile.sm .tile-img{height:110px;}
+.tile.tall .tile-img{height:180px;}
+.tile.wide .tile-img{height:110px;}
+.tile-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s;}
+.tile:hover .tile-img img{transform:scale(1.04);}
+.tile-img-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:40px;opacity:.3;}
+.tile-source-badge{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px;backdrop-filter:blur(4px);}
+.tile-live-badge{position:absolute;top:8px;right:8px;background:var(--red);color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:3px;letter-spacing:.6px;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
+
+/* tile body */
+.tile-body{padding:11px 13px;flex:1;display:flex;flex-direction:column;}
+.tile-tag{font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--red);background:var(--red-pale);padding:2px 7px;border-radius:3px;display:inline-block;margin-bottom:6px;width:fit-content;}
+.tile-tag.green{color:var(--green);background:var(--green-bg);}
+.tile-tag.amber{color:var(--amber);background:var(--amber-bg);}
+.tile-tag.blue{color:var(--blue);background:var(--blue-bg);}
+.tile-tag.grey{color:#555;background:#F0F0F0;}
+.tile-title{font-size:13px;font-weight:700;color:var(--text);line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:auto;}
+.tile.big .tile-title{font-size:16px;-webkit-line-clamp:4;}
+.tile.wide .tile-title{-webkit-line-clamp:2;}
+.tile-meta{font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:6px;margin-top:8px;}
+.tile-meta-src{font-weight:600;color:var(--text2);}
+
+/* hero overlay tile (big tile with overlay text) */
+.tile.overlay .tile-img{position:absolute;inset:0;height:100%;}
+.tile.overlay{min-height:240px;position:relative;}
+.tile.overlay .tile-body{position:relative;z-index:2;justify-content:flex-end;background:linear-gradient(transparent 20%,rgba(0,0,0,.75) 100%);margin-top:auto;}
+.tile.overlay .tile-title{color:#fff;}
+.tile.overlay .tile-meta{color:rgba(255,255,255,.6);}
+.tile.overlay .tile-meta-src{color:rgba(255,255,255,.85);}
+.tile.overlay:hover{transform:translateY(-2px);}
+
+/* loading skeleton */
+.tile-skeleton{background:var(--bg-card);border:1.5px solid var(--border);border-radius:10px;overflow:hidden;}
+.skel{background:linear-gradient(90deg,#F0E8E8 25%,#FFE8E8 50%,#F0E8E8 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skel-img-big{height:220px;}
+.skel-img-sm{height:110px;}
+.skel-body-pad{padding:11px 13px;}
+.skel-line{height:12px;border-radius:4px;margin-bottom:8px;}
+.skel-tag{height:18px;width:60px;border-radius:3px;margin-bottom:8px;}
+
+/* ── GALLERY TILES ── */
+.gal-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.gal-tile{border-radius:9px;overflow:hidden;cursor:pointer;position:relative;background:#1A0A20;aspect-ratio:4/3;}
+.gal-tile:first-child{grid-column:span 2;grid-row:span 2;aspect-ratio:unset;}
+.gal-tile canvas{width:100%;height:100%;display:block;object-fit:cover;}
+.gal-tile:first-child canvas{height:100%;}
+.gal-overlay{position:absolute;inset:0;background:rgba(0,0,0,0);transition:background .2s;display:flex;align-items:flex-end;}
+.gal-tile:hover .gal-overlay{background:rgba(192,17,31,.35);}
+.gal-caption{padding:10px;font-size:12px;font-weight:600;color:#fff;opacity:0;transition:opacity .2s;text-shadow:0 1px 4px rgba(0,0,0,.6);}
+.gal-tile:hover .gal-caption{opacity:1;}
+.gal-zoom-btn{position:absolute;top:8px;right:8px;width:28px;height:28px;background:rgba(255,255,255,.85);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;opacity:0;transition:opacity .2s;}
+.gal-tile:hover .gal-zoom-btn{opacity:1;}
+
+/* ── HSSE DASHBOARD ── */
+.hsse-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px;}
+.hk{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:14px 16px;position:relative;overflow:hidden;transition:box-shadow .2s;}
+.hk:hover{box-shadow:var(--shadow);}
+.hk::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:2px 0 0 2px;}
+.hk.g::before{background:#1A7A3C;} .hk.a::before{background:#D4820A;} .hk.b::before{background:#1A4A8C;} .hk.r::before{background:var(--red);}
+.hk-lbl{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;}
+.hk-val{font-size:28px;font-weight:200;color:var(--text);line-height:1;font-variant-numeric:tabular-nums;}
+.hk-sub{font-size:11px;color:var(--text-muted);margin-top:4px;}
+.hk-chg{font-size:12px;margin-top:4px;font-weight:600;}
+.cg{color:#1A7A3C;} .ca{color:#D4820A;} .cr{color:var(--red);}
+.hsse-bars{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.hb-card{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:16px;}
+.hb-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:12px;}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.bar-lbl{font-size:11px;color:var(--text2);width:130px;flex-shrink:0;}
+.bar-track{flex:1;height:9px;background:var(--border);border-radius:5px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:5px;width:0;transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+.bf-g{background:#1A7A3C;} .bf-a{background:#D4820A;} .bf-r{background:var(--red);}
+.bar-pct{font-size:11px;color:var(--text-muted);width:38px;text-align:right;font-variant-numeric:tabular-nums;}
+
+/* ── POLICY TILES ── */
+.pol-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.pol-tile{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;transition:border-color .2s,box-shadow .2s;display:flex;gap:12px;align-items:flex-start;}
+.pol-tile:hover{border-color:var(--red);box-shadow:0 4px 12px rgba(192,17,31,.09);}
+.pol-icon{width:38px;height:38px;background:var(--red-pale);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.pol-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.3;}
+.pol-ver{font-size:11px;color:var(--text-muted);margin-top:3px;}
+.pol-new{font-size:9px;font-weight:800;background:var(--red);color:#fff;padding:1px 5px;border-radius:3px;margin-left:5px;vertical-align:middle;}
+
+/* ── SIDEBAR WIDGETS ── */
+.widget{background:#fff;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;}
+.w-hdr{padding:10px 14px;border-bottom:2px solid var(--red);display:flex;align-items:center;justify-content:space-between;}
+.w-title{font-size:12px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.8px;}
+.w-more{font-size:11px;color:var(--red);font-weight:600;text-decoration:none;cursor:pointer;}
+.w-body{padding:13px 14px;}
+
+/* CEO widget */
+.ceo-widget{background:#fff;border:1.5px solid var(--border);border-radius:10px;overflow:hidden;}
+.ceo-hdr{background:var(--red);padding:12px 14px;display:flex;align-items:center;gap:10px;}
+.ceo-av{width:42px;height:42px;background:rgba(255,255,255,.25);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:#fff;border:2px solid rgba(255,255,255,.45);flex-shrink:0;}
+.ceo-name{font-size:13px;font-weight:700;color:#fff;}
+.ceo-role{font-size:10px;color:rgba(255,255,255,.75);}
+.ceo-body{padding:14px;}
+.ceo-quote{font-size:13px;color:var(--text2);line-height:1.7;font-style:italic;border-left:3px solid var(--red);padding-left:12px;}
+.ceo-sig{font-size:12px;font-weight:700;color:var(--red);margin-top:10px;}
+.ceo-date{font-size:11px;color:var(--text-muted);}
+
+/* Calendar */
+.cal-month-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.cal-month-title{font-size:13px;font-weight:700;color:var(--text);}
+.cal-nav{background:none;border:1.5px solid var(--border);border-radius:5px;width:26px;height:26px;cursor:pointer;font-size:14px;color:var(--text-muted);transition:border-color .15s,color .15s;}
+.cal-nav:hover{border-color:var(--red);color:var(--red);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;}
+.cal-dh{font-size:10px;font-weight:700;color:var(--text-muted);padding:3px 0;}
+.cal-d{font-size:12px;padding:5px 2px;border-radius:5px;cursor:pointer;transition:background .15s;line-height:1.4;}
+.cal-d:hover{background:var(--red-pale);}
+.cal-d.today{background:var(--red);color:#fff;font-weight:700;}
+.cal-d.has-ev{position:relative;}
+.cal-d.has-ev::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;background:var(--red);border-radius:50%;}
+.cal-d.today::after{background:#fff;}
+.cal-d.muted{color:var(--text-muted);}
+.cal-events{margin-top:10px;border-top:1px solid var(--border-light);padding-top:10px;display:flex;flex-direction:column;gap:7px;}
+.cal-ev{display:flex;gap:9px;align-items:flex-start;cursor:pointer;padding:5px;border-radius:6px;transition:background .15s;}
+.cal-ev:hover{background:var(--red-pale);}
+.cal-dot{width:8px;height:8px;border-radius:50%;background:var(--red);margin-top:3px;flex-shrink:0;}
+.cal-dot.a{background:#D4820A;} .cal-dot.g{background:#1A7A3C;}
+.cal-ev-text{font-size:11px;color:var(--text2);line-height:1.4;font-weight:500;}
+.cal-ev-date{font-size:10px;color:var(--text-muted);}
+
+/* Quick links */
+.ql-list{display:flex;flex-direction:column;}
+.ql-item{display:flex;align-items:center;gap:10px;padding:8px 6px;border-bottom:1px solid var(--border-light);cursor:pointer;text-decoration:none;border-radius:6px;transition:background .15s;}
+.ql-item:last-child{border-bottom:none;}
+.ql-item:hover{background:var(--red-pale);}
+.ql-icon{width:28px;height:28px;background:var(--red-pale);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.ql-lbl{font-size:12px;font-weight:500;color:var(--text);flex:1;}
+.ql-arr{font-size:14px;color:var(--text-muted);}
+
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(3px);}
+.modal-bg.open{opacity:1;pointer-events:auto;}
+.modal{background:#fff;border-radius:14px;width:660px;max-width:94vw;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25);transform:scale(.96) translateY(12px);transition:transform .25s;}
+.modal-bg.open .modal{transform:scale(1) translateY(0);}
+.modal-img{width:100%;height:220px;object-fit:cover;background:linear-gradient(135deg,var(--red-dark),var(--red-mid));}
+.modal-img-fallback{width:100%;height:220px;display:flex;align-items:center;justify-content:center;font-size:60px;opacity:.3;background:linear-gradient(135deg,var(--red-dark),var(--red-mid));}
+.modal-body{padding:24px 28px;}
+.modal-tag{font-size:10px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--red);background:var(--red-pale);padding:3px 8px;border-radius:3px;display:inline-block;margin-bottom:10px;}
+.modal-title{font-size:20px;font-weight:700;color:var(--text);line-height:1.35;margin-bottom:10px;}
+.modal-meta{font-size:12px;color:var(--text-muted);display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.modal-excerpt{font-size:14px;color:var(--text2);line-height:1.7;}
+.modal-link{display:inline-flex;align-items:center;gap:6px;margin-top:16px;background:var(--red);color:#fff;font-size:13px;font-weight:600;padding:9px 20px;border-radius:8px;text-decoration:none;transition:background .15s;}
+.modal-link:hover{background:var(--red-dark);}
+.modal-close{position:absolute;top:14px;right:14px;width:32px;height:32px;background:rgba(0,0,0,.4);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;font-size:16px;border:none;transition:background .15s;}
+.modal-close:hover{background:rgba(0,0,0,.6);}
+.modal-header-area{position:relative;}
+
+/* lightbox */
+.lightbox-bg{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:600;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
+.lightbox-bg.open{opacity:1;pointer-events:auto;}
+.lightbox-inner{position:relative;max-width:880px;width:94vw;}
+.lightbox-canvas{width:100%;border-radius:10px;display:block;}
+.lightbox-caption{color:rgba(255,255,255,.8);font-size:13px;text-align:center;margin-top:10px;}
+.lb-close{position:absolute;top:-14px;right:-14px;width:34px;height:34px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;font-size:18px;border:none;}
+
+/* error / empty */
+.feed-err{font-size:12px;color:var(--text-muted);padding:20px;text-align:center;grid-column:span 6;}
+
+/* ── responsive ── */
+@media(max-width:1100px){
+  .main-grid{grid-template-columns:1fr;}
+  .tile-grid{grid-template-columns:repeat(4,1fr);}
+  .tile.big{grid-column:span 2;}
+  .tile.wide{grid-column:span 4;}
+  .hsse-kpis{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:720px){
+  .tile-grid{grid-template-columns:repeat(2,1fr);}
+  .tile.big,.tile.wide,.tile.tall{grid-column:span 2;}
+  .tile.med,.tile.sm{grid-column:span 2;}
+  .hsse-kpis{grid-template-columns:repeat(2,1fr);}
+  .pol-grid{grid-template-columns:repeat(2,1fr);}
+  .gal-grid{grid-template-columns:repeat(2,1fr);}
+  .gal-tile:first-child{grid-column:span 2;}
+  .hsse-bars{grid-template-columns:1fr;}
+  .tb-date,.tb-div,.tb-center{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a class="logo" href="#">
+    <div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M12 2L4 7v10l8 5 8-5V7L12 2zm0 2.5l5.5 3.44v6.12L12 17.5l-5.5-3.44V7.94L12 4.5z"/></svg></div>
+    <div><span class="logo-name">Petra Energy</span><span class="logo-sub">Intranet Portal</span></div>
+  </a>
+  <div class="tb-center">
+    <div class="tb-search">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="6.5" cy="6.5" r="5" stroke="#888" stroke-width="1.5"/><path d="M10.5 10.5L14 14" stroke="#888" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <input type="text" placeholder="Search news, policies, people…">
+    </div>
+  </div>
+  <div class="tb-right">
+    <div class="tb-div"></div>
+    <span class="tb-date" id="tbDate"></span>
+    <div class="tb-btn">🔔<span class="tb-badge">3</span></div>
+    <div class="tb-btn">⚙️</div>
+    <div class="tb-avatar">RD</div>
+  </div>
+</header>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a class="nav-item active" href="#">Home</a>
+  <a class="nav-item" href="#">Petra News</a>
+  <a class="nav-item" href="#">HSSE <span class="nav-dot"></span></a>
+  <a class="nav-item" href="#">Industry News</a>
+  <a class="nav-item" href="#">HR &amp; Benefits</a>
+  <a class="nav-item" href="#">Projects</a>
+  <a class="nav-item" href="#">Gallery</a>
+  <a class="nav-item" href="#">Policies</a>
+  <a class="nav-item" href="#">Corporate Calendar</a>
+  <a class="nav-item" href="#">Documents</a>
+</nav>
+
+<main class="page">
+
+  <!-- WELCOME -->
+  <div class="welcome">
+    <div class="w-left">
+      <div class="w-avatar">RD</div>
+      <div>
+        <span class="w-name" id="wName">Good morning, Ryan 👋</span>
+        <span class="w-sub" id="wSub">Loading…</span>
+      </div>
+    </div>
+    <div class="w-right">
+      <div class="w-stat"><div class="w-stat-val" id="ltiCount">847</div><div class="w-stat-lbl">LTI-Free Days</div></div>
+      <div class="w-divider"></div>
+      <div class="w-stat"><div class="w-stat-val">23</div><div class="w-stat-lbl">Active Projects</div></div>
+      <div class="w-divider"></div>
+      <div class="weather-widget">
+        <svg width="26" height="26" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="8" fill="#FFCC55"/><line x1="20" y1="4" x2="20" y2="8" stroke="#FFCC55" stroke-width="2" stroke-linecap="round"/><line x1="20" y1="32" x2="20" y2="36" stroke="#FFCC55" stroke-width="2" stroke-linecap="round"/><line x1="4" y1="20" x2="8" y2="20" stroke="#FFCC55" stroke-width="2" stroke-linecap="round"/><line x1="32" y1="20" x2="36" y2="20" stroke="#FFCC55" stroke-width="2" stroke-linecap="round"/></svg>
+        <div><div class="ww-temp" id="wTemp">—°C</div><div class="ww-loc" id="wLoc">Kuala Lumpur</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPECIAL MENTION -->
+  <div class="special" onclick="openModal({title:'Special Mention — Ahmad Faizal bin Razali',tag:'Recognition',tagClass:'',source:'Operations Division',date:'14 July 2025',img:'',emoji:'⭐',excerpt:'Ahmad Faizal responded with exceptional calm and technical precision during the unplanned shutdown at Cendor Platform on 12 July. He contained the situation safely, coordinated the emergency shutdown procedure, and had operations restored 4 hours ahead of schedule — preventing an estimated RM 2.4M in deferred production. Nominated by: Mohd Azri, OIM Cendor. His actions are a perfect example of Petra\'s safety-first culture in action.'})">
+    <div class="sp-icon">⭐</div>
+    <div>
+      <div class="sp-label">Special Mention of the Day</div>
+      <div class="sp-name">Ahmad Faizal bin Razali <span style="font-size:12px;font-weight:400;color:var(--text2)">— Offshore Installation Engineer</span></div>
+      <div class="sp-reason">Outstanding response during unplanned shutdown at Cendor Platform — restored operations 4 hours ahead of schedule, preventing RM 2.4M in deferred production.</div>
+      <div class="sp-dept">Operations Division &nbsp;·&nbsp; Nominated by: Mohd Azri, OIM Cendor &nbsp;·&nbsp; <span style="color:var(--red);font-weight:600">Click to read more →</span></div>
+    </div>
+  </div>
+
+  <!-- TICKER -->
+  <div class="ticker">
+    <span class="ticker-label">🌍 LIVE</span>
+    <div class="ticker-body">
+      <div class="ticker-inner" id="tickerInner">
+        <span class="tick-item"><span class="tick-sep">▸</span> Loading live headlines…</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+  <div class="content-col">
+
+    <!-- NEWS SECTION (tabbed) -->
+    <div class="sec">
+      <div class="news-tabs" style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;gap:4px;border-bottom:none;">
+          <div class="news-tab active" data-tab="petra">📰 Petra News</div>
+          <div class="news-tab" data-tab="og">⛽ Oil &amp; Gas</div>
+          <div class="news-tab" data-tab="world">🌍 World News</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;padding-bottom:4px;flex-shrink:0;">
+          <span id="lastUpdated" style="font-size:11px;color:var(--text-muted);"></span>
+          <span id="refreshCountdown" style="font-size:11px;color:var(--text-muted);"></span>
+          <button onclick="refreshCurrentTab(false);startAutoRefresh();" style="font-size:11px;color:var(--red);background:var(--red-pale);border:1.5px solid var(--red-pale2);border-radius:12px;padding:3px 10px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:4px;">↻ Refresh</button>
+        </div>
+      </div>
+      <div id="newsContainer">
+        <!-- filled by JS -->
+        <div class="tile-grid" id="tileGrid">
+          <!-- skeletons -->
+          <div class="tile-skeleton big"><div class="skel skel-img-big"></div><div class="skel-body-pad"><div class="skel skel-tag"></div><div class="skel skel-line"></div><div class="skel skel-line"></div></div></div>
+          <div class="tile-skeleton med"><div class="skel skel-img-sm"></div><div class="skel-body-pad"><div class="skel skel-tag"></div><div class="skel skel-line"></div></div></div>
+          <div class="tile-skeleton med"><div class="skel skel-img-sm"></div><div class="skel-body-pad"><div class="skel skel-tag"></div><div class="skel skel-line"></div></div></div>
+          <div class="tile-skeleton sm"><div class="skel skel-img-sm"></div><div class="skel-body-pad"><div class="skel skel-tag"></div><div class="skel skel-line"></div></div></div>
+          <div class="tile-skeleton sm"><div class="skel skel-img-sm"></div><div class="skel-body-pad"><div class="skel skel-tag"></div><div class="skel skel-line"></div></div></div>
+          <div class="tile-skeleton sm"><div class="skel skel-img-sm"></div><div class="skel-body-pad"><div class="skel skel-tag"></div><div class="skel skel-line"></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GALLERY -->
+    <div class="sec">
+      <div class="sec-hdr">
+        <span class="sec-title">📸 Petra Group Gallery</span>
+        <a class="sec-more" href="#">View all photos →</a>
+      </div>
+      <div class="gal-grid" id="galGrid">
+        <div class="gal-tile" onclick="openLightbox('g1','Q2 Town Hall — KL HQ, Jun 2025')"><canvas id="g1"></canvas><div class="gal-overlay"><div class="gal-caption">Q2 Town Hall — KL HQ · Jun 2025</div></div><button class="gal-zoom-btn">🔍</button></div>
+        <div class="gal-tile" onclick="openLightbox('g2','Cendor Offshore Team, May 2025')"><canvas id="g2"></canvas><div class="gal-overlay"><div class="gal-caption">Cendor Offshore Team · May 2025</div></div><button class="gal-zoom-btn">🔍</button></div>
+        <div class="gal-tile" onclick="openLightbox('g3','Safety Excellence Awards Night')"><canvas id="g3"></canvas><div class="gal-overlay"><div class="gal-caption">Safety Excellence Awards Night</div></div><button class="gal-zoom-btn">🔍</button></div>
+        <div class="gal-tile" onclick="openLightbox('g4','Komuniti Petra Coastal Cleanup')"><canvas id="g4"></canvas><div class="gal-overlay"><div class="gal-caption">Komuniti Petra · Coastal Cleanup</div></div><button class="gal-zoom-btn">🔍</button></div>
+        <div class="gal-tile" onclick="openLightbox('g5','BOSIET Training Batch 12')"><canvas id="g5"></canvas><div class="gal-overlay"><div class="gal-caption">BOSIET Training · Batch 12</div></div><button class="gal-zoom-btn">🔍</button></div>
+        <div class="gal-tile" onclick="openLightbox('g6','Miri Office Team, Jul 2025')"><canvas id="g6"></canvas><div class="gal-overlay"><div class="gal-caption">Miri Office Team · Jul 2025</div></div><button class="gal-zoom-btn">🔍</button></div>
+      </div>
+    </div>
+
+    <!-- HSSE -->
+    <div class="sec">
+      <div class="sec-hdr">
+        <span class="sec-title">🛡 HSSE Dashboard</span>
+        <a class="sec-more" href="#">Full report →</a>
+      </div>
+      <div class="hsse-kpis">
+        <div class="hk g" onclick="openModal({title:'LTI-Free Achievement',tag:'Safety',tagClass:'',source:'HSSE Division',date:'July 2025',img:'',emoji:'🛡',excerpt:'Petra Energy has achieved 847 consecutive LTI-Free days across all operations as of 14 July 2025. This milestone covers all offshore platforms, shore bases, and HQ offices. The streak represents our strongest safety performance in company history, driven by the HEART safety culture programme launched in 2022.'})">
+          <div class="hk-lbl">LTI-Free Days</div>
+          <div class="hk-val" data-target="847" data-count>0</div>
+          <div class="hk-sub">All Operations</div>
+          <div class="hk-chg cg">↑ Ongoing streak</div>
+        </div>
+        <div class="hk a" onclick="openModal({title:'Near-Miss Reporting Summary — June 2025',tag:'HSSE',tagClass:'amber',source:'HSSE Division',date:'Jun 2025',img:'',emoji:'⚠️',excerpt:'12 near-miss incidents were reported across all operations in June 2025, down from 15 in May — a 20% improvement. All incidents have been investigated and corrective actions closed. The majority (8 of 12) were related to dropped objects and manual handling. Toolbox talks on these hazards have been conducted at all sites.'})">
+          <div class="hk-lbl">Near-Miss Reports</div>
+          <div class="hk-val" data-target="12" data-count>0</div>
+          <div class="hk-sub">June 2025</div>
+          <div class="hk-chg ca">↓ −3 vs May</div>
+        </div>
+        <div class="hk b" onclick="openModal({title:'Safety Observation Programme — June 2025',tag:'HSSE',tagClass:'blue',source:'HSSE Division',date:'Jun 2025',img:'',emoji:'👁️',excerpt:'348 safety observations were logged in June — a 22-observation increase vs May. Of these, 312 were positive observations and 36 were unsafe acts or conditions that were immediately corrected. The Safety Observation Programme (SOP) is Petra\'s core tool for proactive risk identification across all sites.'})">
+          <div class="hk-lbl">Safety Observations</div>
+          <div class="hk-val" data-target="348" data-count>0</div>
+          <div class="hk-sub">June 2025</div>
+          <div class="hk-chg cg">↑ +22 vs May</div>
+        </div>
+        <div class="hk g" onclick="openModal({title:'Mandatory HSSE Training Compliance',tag:'Training',tagClass:'green',source:'HSSE Division',date:'Q2 2025',img:'',emoji:'🎓',excerpt:'96% of all employees are compliant with mandatory HSSE training requirements as of Q2 2025, up from 94% in Q1. The remaining 4% (primarily offshore rotators currently on break) are scheduled to complete training before 31 August 2025. Key modules include BOSIET Refresher, Manual Handling, and Emergency Response.'})">
+          <div class="hk-lbl">Training Compliance</div>
+          <div class="hk-val" data-target="96" data-count>0</div>
+          <div class="hk-sub">Mandatory HSSE — Q2</div>
+          <div class="hk-chg cg">↑ +2% vs Q1 &nbsp;<span style="font-size:10px;color:var(--text-muted)">%</span></div>
+        </div>
+      </div>
+      <div class="hsse-bars">
+        <div class="hb-card">
+          <div class="hb-title">Incident Rate by Division — YTD 2025 (TRIR)</div>
+          <div class="bar-row"><span class="bar-lbl">Operations</span><div class="bar-track"><div class="bar-fill bf-g" data-w="92"></div></div><span class="bar-pct">0.08</span></div>
+          <div class="bar-row"><span class="bar-lbl">Offshore HUC</span><div class="bar-track"><div class="bar-fill bf-g" data-w="88"></div></div><span class="bar-pct">0.11</span></div>
+          <div class="bar-row"><span class="bar-lbl">Marine</span><div class="bar-track"><div class="bar-fill bf-a" data-w="72"></div></div><span class="bar-pct">0.28</span></div>
+          <div class="bar-row"><span class="bar-lbl">Engineering</span><div class="bar-track"><div class="bar-fill bf-g" data-w="95"></div></div><span class="bar-pct">0.05</span></div>
+          <div class="bar-row"><span class="bar-lbl">Logistics</span><div class="bar-track"><div class="bar-fill bf-a" data-w="68"></div></div><span class="bar-pct">0.32</span></div>
+        </div>
+        <div class="hb-card">
+          <div class="hb-title">HSE Audit Score by Site — Q2 2025</div>
+          <div class="bar-row"><span class="bar-lbl">Cendor Platform</span><div class="bar-track"><div class="bar-fill bf-g" data-w="96"></div></div><span class="bar-pct">96%</span></div>
+          <div class="bar-row"><span class="bar-lbl">Berantai FPSO</span><div class="bar-track"><div class="bar-fill bf-g" data-w="91"></div></div><span class="bar-pct">91%</span></div>
+          <div class="bar-row"><span class="bar-lbl">KL HQ Office</span><div class="bar-track"><div class="bar-fill bf-g" data-w="98"></div></div><span class="bar-pct">98%</span></div>
+          <div class="bar-row"><span class="bar-lbl">Miri Base</span><div class="bar-track"><div class="bar-fill bf-g" data-w="88"></div></div><span class="bar-pct">88%</span></div>
+          <div class="bar-row"><span class="bar-lbl">Labuan Office</span><div class="bar-track"><div class="bar-fill bf-a" data-w="78"></div></div><span class="bar-pct">78%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POLICIES -->
+    <div class="sec">
+      <div class="sec-hdr">
+        <span class="sec-title">📋 Policies &amp; Procedures</span>
+        <a class="sec-more" href="#">Document library →</a>
+      </div>
+      <div class="pol-grid">
+        <div class="pol-tile" onclick="openModal({title:'HSSE Management System Policy',tag:'Policy',tagClass:'',source:'HSSE Division',date:'Rev. 5 · Jun 2025',img:'',emoji:'🛡',excerpt:'The Petra Energy HSSE Management System Policy (Rev. 5) sets out the company\'s commitments and framework for managing health, safety, security and environmental risks across all operations. This revision includes updated requirements for Management of Change (MOC), enhanced contractor safety management provisions, and alignment with ISO 45001:2018. All employees must acknowledge receipt by 31 August 2025.'})">
+          <div class="pol-icon">🛡</div><div><div class="pol-name">HSSE Management System Policy<span class="pol-new">NEW</span></div><div class="pol-ver">Rev. 5 · Updated Jun 2025</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'Code of Business Conduct & Ethics',tag:'Policy',tagClass:'grey',source:'Legal & Compliance',date:'Rev. 3 · Jan 2025',img:'',emoji:'👤',excerpt:'Petra Energy\'s Code of Business Conduct and Ethics defines the standards of integrity, professionalism, and ethical behaviour expected of all employees, contractors, and agents. Key areas include anti-bribery and corruption, conflict of interest, whistleblower protection, and fair competition. Annual declaration required from all Grades 5 and above.'})">
+          <div class="pol-icon">👤</div><div><div class="pol-name">Code of Business Conduct &amp; Ethics</div><div class="pol-ver">Rev. 3 · Updated Jan 2025</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'HR Policy Manual',tag:'Policy',tagClass:'blue',source:'Human Resources',date:'Rev. 7 · Jul 2025',img:'',emoji:'💼',excerpt:'The HR Policy Manual (Rev. 7) covers all employment-related policies including recruitment, compensation and benefits, leave entitlements, performance management, disciplinary procedures, and employee grievance mechanisms. This revision introduces the new Flexible Work Arrangement (FWA) policy and updated parental leave provisions effective 1 August 2025.'})">
+          <div class="pol-icon">💼</div><div><div class="pol-name">HR Policy Manual<span class="pol-new">NEW</span></div><div class="pol-ver">Rev. 7 · Updated Jul 2025</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'Information Security & IT Acceptable Use Policy',tag:'Policy',tagClass:'grey',source:'IT Division',date:'Rev. 2 · Mar 2025',img:'',emoji:'🔒',excerpt:'This policy governs the acceptable use of Petra Energy\'s IT systems, networks, data, and devices. It covers password management, data classification, acceptable internet use, mobile device management, and the handling of confidential information. Non-compliance may result in disciplinary action.'})">
+          <div class="pol-icon">🔒</div><div><div class="pol-name">Information Security &amp; IT Acceptable Use</div><div class="pol-ver">Rev. 2 · Updated Mar 2025</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'Environmental Management Policy',tag:'Policy',tagClass:'green',source:'Sustainability',date:'Rev. 4 · Apr 2025',img:'',emoji:'🌿',excerpt:'Petra Energy\'s Environmental Management Policy outlines our commitment to minimising the environmental impact of our operations, in compliance with Malaysian environmental regulations and international best practices. This includes targets for greenhouse gas emission reductions, waste management, water conservation, and biodiversity protection under our Net Zero Roadmap 2035.'})">
+          <div class="pol-icon">🌿</div><div><div class="pol-name">Environmental Management Policy</div><div class="pol-ver">Rev. 4 · Updated Apr 2025</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'Procurement & Vendor Management Policy',tag:'Policy',tagClass:'amber',source:'Supply Chain',date:'Rev. 2 · Feb 2025',img:'',emoji:'📦',excerpt:'This policy establishes the framework for all procurement activities at Petra Energy, from vendor registration and qualification to contract award and performance monitoring. It includes Bumiputera participation requirements, conflict of interest safeguards, and the vendor blacklisting procedure. All procurement above RM 50,000 must follow the three-quotation minimum rule.'})">
+          <div class="pol-icon">📦</div><div><div class="pol-name">Procurement &amp; Vendor Management Policy</div><div class="pol-ver">Rev. 2 · Updated Feb 2025</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar-col">
+
+    <div class="ceo-widget">
+      <div class="ceo-hdr">
+        <div class="ceo-av">MT</div>
+        <div><div class="ceo-name">Mohd Taufik bin Ahmad</div><div class="ceo-role">Group Chief Executive Officer</div></div>
+      </div>
+      <div class="ceo-body">
+        <p class="ceo-quote">The Kasawari award is a testament to our team's technical excellence. As we push into H2, carry that same discipline — in safety, in quality, and in how we treat each other. Every Petran matters.</p>
+        <div class="ceo-sig" style="margin-top:12px;">Mohd Taufik Ahmad</div>
+        <div class="ceo-date">July 2025 Message</div>
+        <a style="display:inline-block;margin-top:10px;font-size:12px;color:var(--red);font-weight:600;cursor:pointer;" onclick="openModal({title:'Message from the CEO — July 2025',tag:'Leadership',tagClass:'',source:'Office of the CEO',date:'July 2025',img:'',emoji:'💬',excerpt:'Dear Petrans,\n\nJuly has been a landmark month for Petra Energy. The award of the Kasawari HUC contract — one of the largest in our history — is the direct result of years of investment in people, process, and technology. I am immensely proud of every person who contributed to winning this work.\n\nAs we enter the second half of 2025, our focus must sharpen. We have ambitious targets: a revenue milestone, our HSSE streak to protect, and a transformation journey underway with SAP S/4HANA. None of these are easy, but none are beyond us.\n\nI ask each of you to carry the Kasawari spirit forward — take ownership, speak up when something is unsafe, and lift your colleagues. That is the Petra way.\n\nThank you for your trust and your hard work.\n\nYour CEO,\nMohd Taufik Ahmad'})">Read full message →</a>
+      </div>
+    </div>
+
+    <div class="widget">
+      <div class="w-hdr"><span class="w-title">Corporate Calendar</span><a class="w-more" href="#">Full view →</a></div>
+      <div class="w-body">
+        <div class="cal-month-row">
+          <button class="cal-nav" onclick="changeMonth(-1)">‹</button>
+          <span class="cal-month-title" id="calTitle"></span>
+          <button class="cal-nav" onclick="changeMonth(1)">›</button>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+        <div class="cal-events">
+          <div class="cal-ev" onclick="openModal({title:'Q3 2025 Business Review',tag:'Corporate',tagClass:'',source:'Strategy Division',date:'15 Jul 2025',img:'',emoji:'📊',excerpt:'The Q3 2025 Business Review will be held on 15 July at Level 28, KL HQ. All Division Heads and Department Managers are required to attend. Each division to submit Q3 performance decks to strategy@petraenergy.com.my by 13 July (COB). Full-day session; business attire required.'})">
+            <div class="cal-dot"></div><div><div class="cal-ev-text">Q3 Business Review — All Division Heads</div><div class="cal-ev-date">15 Jul · HQ Level 28</div></div>
+          </div>
+          <div class="cal-ev" onclick="openModal({title:'Annual Fire Drill 2025',tag:'HSSE',tagClass:'',source:'HSSE Division',date:'18 Jul 2025',img:'',emoji:'🔥',excerpt:'The annual fire drill will be conducted simultaneously across all Petra Energy offices on 18 July 2025. Evacuation at KL HQ: 10:00 AM sharp. Muster points as per Emergency Response Plan. All employees must participate. Re-entry only upon All Clear from the Emergency Response Team.'})">
+            <div class="cal-dot"></div><div><div class="cal-ev-text">Annual Fire Drill — All Buildings</div><div class="cal-ev-date">18 Jul · KL, Labuan, Miri</div></div>
+          </div>
+          <div class="cal-ev" onclick="openModal({title:'Leadership in Energy Forum 2025',tag:'Industry',tagClass:'amber',source:'Corporate Affairs',date:'22 Jul 2025',img:'',emoji:'🏛️',excerpt:'Petra Energy is a Gold Sponsor of the Leadership in Energy Forum 2025, to be held at KLCC Convention Centre on 22 July. Our CEO will deliver a keynote on "The HUC Opportunity: Malaysia\'s Offshore Future." Employees interested in attending may request tickets through Corporate Affairs. Full-day programme; networking dinner to follow.'})">
+            <div class="cal-dot a"></div><div><div class="cal-ev-text">Leadership in Energy Forum 2025</div><div class="cal-ev-date">22 Jul · KLCC Convention</div></div>
+          </div>
+          <div class="cal-ev">
+            <div class="cal-dot g"></div><div><div class="cal-ev-text">Hari Raya Haji — Public Holiday</div><div class="cal-ev-date">31 Jul · Office Closed</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="widget">
+      <div class="w-hdr"><span class="w-title">Quick Links</span></div>
+      <div class="w-body">
+        <div class="ql-list">
+          <a class="ql-item" href="#"><div class="ql-icon">📝</div><span class="ql-lbl">Leave Application (HRiQ)</span><span class="ql-arr">›</span></a>
+          <a class="ql-item" href="#"><div class="ql-icon">💰</div><span class="ql-lbl">Payslip &amp; EPF/SOCSO</span><span class="ql-arr">›</span></a>
+          <a class="ql-item" href="#"><div class="ql-icon">🛡</div><span class="ql-lbl">HSSE Incident Report</span><span class="ql-arr">›</span></a>
+          <a class="ql-item" href="#"><div class="ql-icon">📦</div><span class="ql-lbl">PR / PO Approval (SAP)</span><span class="ql-arr">›</span></a>
+          <a class="ql-item" href="#"><div class="ql-icon">✈️</div><span class="ql-lbl">Travel &amp; Expense Claims</span><span class="ql-arr">›</span></a>
+          <a class="ql-item" href="#"><div class="ql-icon">📚</div><span class="ql-lbl">Document Management</span><span class="ql-arr">›</span></a>
+          <a class="ql-item" href="#"><div class="ql-icon">🎓</div><span class="ql-lbl">Training &amp; Certification</span><span class="ql-arr">›</span></a>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+  </div>
+
+</main>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header-area">
+      <div id="modalImgWrap"></div>
+      <button class="modal-close" onclick="document.getElementById('modalBg').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-tag" id="modalTag"></div>
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-meta" id="modalMeta"></div>
+      <div class="modal-excerpt" id="modalExcerpt"></div>
+      <a class="modal-link" id="modalLink" href="#" target="_blank">Read full article ↗</a>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox-bg" id="lbBg" onclick="closeLightbox()">
+  <div class="lightbox-inner" onclick="event.stopPropagation()">
+    <button class="lb-close" onclick="closeLightbox()">✕</button>
+    <canvas class="lightbox-canvas" id="lbCanvas"></canvas>
+    <div class="lightbox-caption" id="lbCaption"></div>
+  </div>
+</div>
+
+<script>
+// ── DATE & GREETING ──
+const now = new Date();
+const DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+document.getElementById('tbDate').textContent=`${DAYS[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
+const hr=now.getHours();
+const greet=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
+document.getElementById('wName').textContent=`${greet}, Ryan 👋`;
+document.getElementById('wSub').textContent=`${DAYS[now.getDay()]}, ${now.getDate()} ${MONTHS[now.getMonth()]} ${now.getFullYear()} · 3 unread announcements · 1 pending approval`;
+
+// ── WEATHER ──
+fetch('https://api.open-meteo.com/v1/forecast?latitude=3.139&longitude=101.6869&current_weather=true')
+  .then(r=>r.json()).then(d=>{
+    const t=Math.round(d.current_weather.temperature);
+    const c=d.current_weather.weathercode;
+    const desc=c<=1?'Sunny':c<=3?'Partly Cloudy':c<=67?'Rainy':'Stormy';
+    document.getElementById('wTemp').textContent=t+'°C';
+    document.getElementById('wLoc').textContent='Kuala Lumpur · '+desc;
+  }).catch(()=>{document.getElementById('wTemp').textContent='33°C';});
+
+// ── CALENDAR ──
+let cY=now.getFullYear(),cM=now.getMonth();
+const evDays=[15,18,21,22,25,31];
+function renderCal(){
+  document.getElementById('calTitle').textContent=MONTHS[cM]+' '+cY;
+  const first=new Date(cY,cM,1).getDay();
+  const last=new Date(cY,cM+1,0).getDate();
+  const prevLast=new Date(cY,cM,0).getDate();
+  let h=['Su','Mo','Tu','We','Th','Fr','Sa'].map(d=>`<div class="cal-dh">${d}</div>`).join('');
+  for(let i=0;i<first;i++) h+=`<div class="cal-d muted">${prevLast-first+i+1}</div>`;
+  for(let d=1;d<=last;d++){
+    const isT=d===now.getDate()&&cM===now.getMonth()&&cY===now.getFullYear();
+    const hasE=evDays.includes(d)&&cM===6&&cY===2025;
+    h+=`<div class="cal-d${isT?' today':''}${hasE?' has-ev':''}">${d}</div>`;
+  }
+  for(let i=1;i<=42-first-last;i++) h+=`<div class="cal-d muted">${i}</div>`;
+  document.getElementById('calGrid').innerHTML=h;
+}
+function changeMonth(d){cM+=d;if(cM>11){cM=0;cY++;}else if(cM<0){cM=11;cY--;}renderCal();}
+renderCal();
+
+// ── GALLERY CANVASES ──
+const galData=[
+  {id:'g1',c1:'#1A0A20',c2:'#3A1A5C',type:'crowd',lbl:'Q2 Town Hall · KL HQ'},
+  {id:'g2',c1:'#0A1A3A',c2:'#1A3A6C',type:'platform',lbl:'Cendor Offshore Team'},
+  {id:'g3',c1:'#3A0810',c2:'#8C1828',type:'dots',lbl:'Safety Awards Night'},
+  {id:'g4',c1:'#0A2A18',c2:'#1A6B3C',type:'wave',lbl:'Coastal Cleanup Drive'},
+  {id:'g5',c1:'#2A1A00',c2:'#6A4A00',type:'crowd',lbl:'BOSIET Training Batch 12'},
+  {id:'g6',c1:'#0A1A3A',c2:'#2A4A7C',type:'dots',lbl:'Miri Office Team'},
+];
+function drawGal(id,c1,c2,type,lbl){
+  const cv=document.getElementById(id);if(!cv)return;
+  const w=cv.offsetWidth||200,h=cv.offsetHeight||150;
+  cv.width=w;cv.height=h;
+  const ctx=cv.getContext('2d');
+  const g=ctx.createLinearGradient(0,0,w,h);g.addColorStop(0,c1);g.addColorStop(1,c2);
+  ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+  if(type==='crowd'){
+    ctx.fillStyle='rgba(255,255,255,.18)';
+    for(let i=0;i<8;i++){const x=20+i*(w/8.5);const y=h-10;ctx.beginPath();ctx.arc(x,y-22,8,0,Math.PI*2);ctx.fill();ctx.fillRect(x-6,y-15,12,22);}
+  }else if(type==='platform'){
+    ctx.strokeStyle='rgba(255,255,255,.22)';ctx.lineWidth=2;
+    ctx.strokeRect(w*.35,h*.15,w*.3,h*.65);ctx.beginPath();ctx.moveTo(w*.5,h*.15);ctx.lineTo(w*.5,0);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(w*.35,h*.55);ctx.lineTo(w*.05,h*.8);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(w*.65,h*.55);ctx.lineTo(w*.95,h*.8);ctx.stroke();
+  }else if(type==='wave'){
+    ctx.strokeStyle='rgba(255,255,255,.18)';ctx.lineWidth=1.5;
+    for(let i=0;i<5;i++){ctx.beginPath();for(let x=0;x<=w;x+=3)ctx.lineTo(x,h/2+Math.sin(x*.055+i*.8)*18+i*9);ctx.stroke();}
+  }else{
+    for(let i=0;i<14;i++){ctx.beginPath();ctx.arc(Math.random()*w,Math.random()*h,Math.random()*10+2,0,Math.PI*2);ctx.fillStyle=`rgba(255,255,255,${Math.random()*.12+.04})`;ctx.fill();}
+  }
+  ctx.font=`600 ${Math.min(w/12,13)}px 'Segoe UI',sans-serif`;
+  ctx.fillStyle='rgba(255,255,255,.5)';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(lbl,w/2,h/2);
+}
+setTimeout(()=>{galData.forEach(d=>drawGal(d.id,d.c1,d.c2,d.type,d.lbl));},120);
+
+// ── LIGHTBOX ──
+function openLightbox(canvasId,caption){
+  const src=document.getElementById(canvasId);
+  const lb=document.getElementById('lbCanvas');
+  lb.width=src.width;lb.height=src.height;
+  lb.getContext('2d').drawImage(src,0,0);
+  document.getElementById('lbCaption').textContent=caption;
+  document.getElementById('lbBg').classList.add('open');
+}
+function closeLightbox(){document.getElementById('lbBg').classList.remove('open');}
+
+// ── MODAL ──
+function openModal(data){
+  const bg=document.getElementById('modalBg');
+  const imgWrap=document.getElementById('modalImgWrap');
+  if(data.img){
+    imgWrap.innerHTML=`<img class="modal-img" src="${data.img}" onerror="this.outerHTML='<div class=modal-img-fallback>'+String.fromCodePoint(${data.emoji?'0x'+data.emoji.codePointAt(0).toString(16):'0x1F4F0'})+'</div>'">`;
+  } else {
+    imgWrap.innerHTML=`<div class="modal-img-fallback">${data.emoji||'📰'}</div>`;
+  }
+  document.getElementById('modalTag').textContent=data.tag||'';
+  document.getElementById('modalTag').className='modal-tag '+(data.tagClass||'');
+  document.getElementById('modalTitle').textContent=data.title||'';
+  document.getElementById('modalMeta').innerHTML=`<span>${data.source||''}</span><span>·</span><span>${data.date||''}</span>`;
+  document.getElementById('modalExcerpt').innerHTML=(data.excerpt||'').replace(/\n/g,'<br>');
+  const link=document.getElementById('modalLink');
+  if(data.link){link.href=data.link;link.style.display='inline-flex';}
+  else{link.style.display='none';}
+  bg.classList.add('open');
+}
+function closeModal(e){if(e.target===document.getElementById('modalBg'))document.getElementById('modalBg').classList.remove('open');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.getElementById('modalBg').classList.remove('open');document.getElementById('lbBg').classList.remove('open');}});
+
+// ── HSSE COUNTERS (animate on page load) ──
+function animateCounters(){
+  document.querySelectorAll('[data-count]').forEach(el=>{
+    const target=parseInt(el.dataset.target);
+    const dur=1500,step=16;
+    let cur=0,start=null;
+    function tick(ts){if(!start)start=ts;const p=Math.min((ts-start)/dur,1);cur=Math.round(p*p*target);el.textContent=cur;if(p<1)requestAnimationFrame(tick);}
+    requestAnimationFrame(tick);
+  });
+}
+// ── HSSE BARS (animate on scroll) ──
+function animateBars(){
+  document.querySelectorAll('.bar-fill[data-w]').forEach(el=>{
+    el.style.width=el.dataset.w+'%';
+  });
+}
+const hsseSec=document.querySelector('.hsse-kpis');
+const io=new IntersectionObserver(entries=>{if(entries[0].isIntersecting){animateCounters();animateBars();io.disconnect();}},{threshold:.3});
+io.observe(hsseSec);
+
+// ── NEWS CONFIG ──
+const PROXY='https://api.rss2json.com/v1/api.json?rss_url=';
+let currentTab='petra';
+let refreshTimer=null;
+let countdownTimer=null;
+let secondsLeft=300;
+
+// Multiple feeds per category — tries each until one returns images
+const FEEDS={
+  petra:null,
+  og:[
+    'https://oilprice.com/rss/main',
+    'https://www.rigzone.com/news/rss/',
+    'https://www.offshore-technology.com/feed/',
+  ],
+  world:[
+    'https://feeds.bbci.co.uk/news/world/rss.xml',
+    'https://www.aljazeera.com/xml/rss/all.xml',
+    'https://rss.nytimes.com/services/xml/rss/nyt/World.xml',
+  ]
+};
+
+const PETRA_NEWS=[
+  {title:'Petra Energy Secures RM 420M HUC Contract for Kasawari Gas Development',link:'https://www.petradirect.com.my',pubDate:new Date(Date.now()-4*86400000).toISOString(),description:'Petra Energy Berhad has been awarded the Hook-Up and Commissioning scope by PETRONAS Carigali for the Kasawari Gas Development — one of the largest offshore contracts in the company\'s history. The contract spans 36 months and covers all HUC activities on the Kasawari-A and Kasawari-B platforms in the South China Sea.',source:'Corporate Affairs',tag:'Breaking',tagClass:'',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Petronas_Twin_Towers%2C_Kuala_Lumpur_%28night%29.jpg/640px-Petronas_Twin_Towers%2C_Kuala_Lumpur_%28night%29.jpg'},
+  {title:'Net Zero Roadmap 2035 — Q2 Progress Report Released',link:'#',pubDate:new Date(Date.now()-6*86400000).toISOString(),description:'Petra Energy has released its Q2 2025 progress report on the Net Zero Roadmap 2035. Scope 1 and 2 emissions are down 8.2% year-on-year, ahead of the 7% interim target.',source:'Sustainability',tag:'ESG',tagClass:'green',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Sunset_over_the_sea.jpg/640px-Sunset_over_the_sea.jpg'},
+  {title:'Offshore Crew Change Protocol Updated — Effective 15 July 2025',link:'#',pubDate:new Date(Date.now()-7*86400000).toISOString(),description:'Effective 15 July, all offshore crew change rotations will follow the updated 28/28 schedule using only PETRONAS-approved logistics providers.',source:'Operations',tag:'Operations',tagClass:'',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Offshore_platform.jpg/640px-Offshore_platform.jpg'},
+  {title:'Q2 FY2025 Financial Results — Revenue Up 14% YoY to RM 1.2 Billion',link:'#',pubDate:new Date(Date.now()-9*86400000).toISOString(),description:'Petra Energy Berhad reported revenue of RM 1.2 billion for Q2 FY2025, up 14.2% from Q2 FY2024. EBITDA margin improved to 18.3% from 16.1%.',source:'Finance',tag:'Finance',tagClass:'amber',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Kuala_Lumpur_skyline.jpg/640px-Kuala_Lumpur_skyline.jpg'},
+  {title:'SAP S/4HANA Go-Live Confirmed for 1 October 2025',link:'#',pubDate:new Date(Date.now()-11*86400000).toISOString(),description:'The Digital Transformation Office has confirmed the SAP S/4HANA go-live date. All employees must complete the mandatory SAP e-learning modules by 31 August.',source:'IT Division',tag:'Technology',tagClass:'blue',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/SAP_2011_logo.svg/640px-SAP_2011_logo.svg.png'},
+  {title:'Petra Excellence Awards 2025 — Nominations Now Open',link:'#',pubDate:new Date(Date.now()-12*86400000).toISOString(),description:'Nominations for the Petra Excellence Awards 2025 are now open across 7 categories including the new Sustainability Champion award. Deadline 25 July 2025.',source:'Corporate Comms',tag:'People',tagClass:'green',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Group_of_people_icon.svg/640px-Group_of_people_icon.svg.png'},
+];
+
+const TAG_CLASSES=['','amber','green','blue','grey','','amber','green'];
+const TAG_NAMES_OG=['Market','Offshore','LNG','Energy','Policy','Analysis','Technology','Upstream'];
+const TAG_NAMES_W=['World','Asia','Business','Technology','Climate','Politics','Science','Health'];
+
+function timeAgo(d){
+  const s=(Date.now()-new Date(d))/1000;
+  if(s<60)return 'Just now';
+  if(s<3600)return Math.floor(s/60)+'m ago';
+  if(s<86400)return Math.floor(s/3600)+'h ago';
+  return Math.floor(s/86400)+'d ago';
+}
+
+// Extract best available image from RSS item
+function extractImg(item){
+  return item.thumbnail && item.thumbnail.startsWith('http') ? item.thumbnail
+    : item.enclosure?.link && item.enclosure.link.match(/\.(jpg|jpeg|png|webp)/i) ? item.enclosure.link
+    : (item.description||'').match(/<img[^>]+src=["']([^"']+)["']/i)?.[1]
+    : (item.content||'').match(/<img[^>]+src=["']([^"']+)["']/i)?.[1]
+    : '';
+}
+
+// Gradient backgrounds per category as fallback when no image
+const GRAD_BG={
+  '':'linear-gradient(135deg,#6B0810,#C0111F)',
+  green:'linear-gradient(135deg,#0F3D2B,#1A8C55)',
+  amber:'linear-gradient(135deg,#3D1A00,#C46A00)',
+  blue:'linear-gradient(135deg,#0A1E3A,#1A4A8C)',
+  grey:'linear-gradient(135deg,#2A2A2A,#555)',
+};
+
+function tileHTML(item,idx,tagName,tagClass,source){
+  const sizes=['big overlay','med','med','sm','sm','sm'];
+  const cls=sizes[idx]||'sm';
+  const img=item.img||extractImg(item);
+  const fallbackEmojis=['📰','⛽','🌍','🔥','💹','🌊'];
+  const fb=fallbackEmojis[idx%fallbackEmojis.length];
+  const gradBg=GRAD_BG[tagClass||''];
+  const excerpt=(item.description||item.content||'').replace(/<[^>]+>/g,'').slice(0,260);
+  // safely encode for onclick attribute
+  const enc=s=>encodeURIComponent(s||'');
+  return `<div class="tile ${cls}" onclick="handleTileClick(${idx},'${enc(item.title)}','${enc(tagName)}','${tagClass||''}','${enc(source)}','${enc(item.pubDate)}','${enc(img)}','${fb}','${enc(excerpt)}','${enc(item.link||'#')}')">
+    <div class="tile-img" style="${img?'':'background:'+gradBg}">
+      ${img?`<img src="${img}" alt="" loading="lazy" onerror="this.parentElement.style.background='${gradBg}';this.remove()">`:``}
+      <div class="tile-img-fallback" style="${img?'display:none':''}">${fb}</div>
+      <span class="tile-source-badge">${source||'News'}</span>
+      ${idx===0?'<span class="tile-live-badge">LIVE</span>':''}
+    </div>
+    <div class="tile-body">
+      <span class="tile-tag ${tagClass||''}">${tagName||'News'}</span>
+      <div class="tile-title">${item.title||''}</div>
+      <div class="tile-meta"><span class="tile-meta-src">${source||''}</span><span>·</span><span>${timeAgo(item.pubDate||new Date())}</span></div>
+    </div>
+  </div>`;
+}
+
+function handleTileClick(idx,title,tag,tagClass,source,date,img,emoji,excerpt,link){
+  openModal({
+    title:decodeURIComponent(title),
+    tag:decodeURIComponent(tag),
+    tagClass,
+    source:decodeURIComponent(source),
+    date:timeAgo(decodeURIComponent(date)),
+    img:decodeURIComponent(img),
+    emoji,
+    excerpt:decodeURIComponent(excerpt),
+    link:decodeURIComponent(link)
+  });
+}
+
+function showSkeletons(){
+  document.getElementById('tileGrid').innerHTML=
+    `<div class="tile-skeleton big"><div class="skel skel-img-big"></div><div class="skel-body-pad"><div class="skel skel-tag"></div><div class="skel skel-line"></div><div class="skel skel-line"></div></div></div>`+
+    `<div class="tile-skeleton med"><div class="skel skel-img-sm"></div><div class="skel-body-pad"><div class="skel skel-tag"></div><div class="skel skel-line"></div></div></div>`.repeat(5);
+}
+
+function renderPetraNews(){
+  const grid=document.getElementById('tileGrid');
+  grid.style.opacity='0';
+  setTimeout(()=>{
+    grid.innerHTML=PETRA_NEWS.map((item,i)=>tileHTML(item,i,item.tag,item.tagClass,item.source)).join('');
+    grid.style.transition='opacity .4s';grid.style.opacity='1';
+    updateRefreshUI();
+  },200);
+}
+
+async function fetchFeedWithImages(urls,count=6){
+  for(const rssUrl of urls){
+    try{
+      const res=await fetch(PROXY+encodeURIComponent(rssUrl)+'&count='+count);
+      const data=await res.json();
+      if(data.items?.length){
+        // prefer feed where majority of items have images
+        const withImg=data.items.filter(i=>extractImg(i)).length;
+        if(withImg>=2||urls.length===1) return data;
+      }
+    }catch(e){}
+  }
+  return null;
+}
+
+async function renderFeedNews(feedKey,silent=false){
+  const grid=document.getElementById('tileGrid');
+  if(!silent)showSkeletons();
+  else{grid.style.opacity='0.5';}
+  try{
+    const data=await fetchFeedWithImages(FEEDS[feedKey]);
+    if(!data?.items?.length)throw new Error('no items');
+    const tags=feedKey==='og'?TAG_NAMES_OG:TAG_NAMES_W;
+    const src=data.feed?.title||'News';
+    setTimeout(()=>{
+      grid.innerHTML=data.items.slice(0,6).map((item,i)=>tileHTML(item,i,tags[i%tags.length],TAG_CLASSES[i%TAG_CLASSES.length],src)).join('');
+      grid.style.transition='opacity .4s';grid.style.opacity='1';
+      updateRefreshUI();
+    },silent?0:300);
+  }catch(e){
+    grid.style.opacity='1';
+    grid.innerHTML=`<div class="feed-err">⚠️ Could not load live feed — check your internet connection.</div>`;
+  }
+}
+
+// ── AUTO-REFRESH ──
+function startAutoRefresh(){
+  clearInterval(refreshTimer);
+  clearInterval(countdownTimer);
+  secondsLeft=300;
+  updateCountdown();
+  countdownTimer=setInterval(()=>{
+    secondsLeft--;
+    updateCountdown();
+    if(secondsLeft<=0){
+      secondsLeft=300;
+      refreshCurrentTab(true);
+    }
+  },1000);
+}
+
+function updateCountdown(){
+  const el=document.getElementById('refreshCountdown');
+  if(el) el.textContent=`Refreshing in ${secondsLeft}s`;
+}
+
+function updateRefreshUI(){
+  const el=document.getElementById('lastUpdated');
+  if(el) el.textContent=`Updated ${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;
+}
+
+function refreshCurrentTab(silent=false){
+  if(currentTab==='petra')renderPetraNews();
+  else renderFeedNews(currentTab,silent);
+}
+
+// ── TABS ──
+document.querySelectorAll('.news-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.news-tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    currentTab=tab.dataset.tab;
+    refreshCurrentTab(false);
+    startAutoRefresh();
+  });
+});
+
+renderPetraNews();
+startAutoRefresh();
+
+// ── TICKER from BBC — refresh every 10 mins ──
+async function loadTicker(){
+  try{
+    const r=await fetch(PROXY+encodeURIComponent('https://feeds.bbci.co.uk/news/world/rss.xml')+'&count=12');
+    const d=await r.json();
+    if(!d.items?.length)throw new Error();
+    const headlines=d.items.map(i=>i.title);
+    const all=[...headlines,...headlines];
+    document.getElementById('tickerInner').innerHTML=all.map(h=>`<span class="tick-item"><span class="tick-sep">▸</span> ${h}</span>`).join('');
+  }catch(e){}
+}
+loadTicker();
+setInterval(loadTicker,600000);
+
+// ════════════════════════════════════════════════════
+//  SHAREPOINT INTEGRATION
+//  ── Fill in the 3 lines below, then redeploy ──
+// ════════════════════════════════════════════════════
+const SP_CONFIG = {
+  clientId:    'PASTE_CLIENT_ID_HERE',       // from IT / Azure AD
+  tenantId:    'PASTE_TENANT_ID_HERE',       // from IT / Azure AD
+  siteUrl:     'PASTE_YOUR_SHAREPOINT_SITE_URL_HERE', // e.g. https://petraenergy.sharepoint.com/sites/intranet
+};
+// ════════════════════════════════════════════════════
+
+const SP_SCOPES = ['Sites.Read.All','Calendars.Read','User.Read'];
+let msalApp = null;
+let spAccount = null;
+let spSiteId  = null;
+const GRAPH   = 'https://graph.microsoft.com/v1.0';
+
+// ── inject connect button into welcome bar ──
+(function injectConnectBtn(){
+  const wr = document.querySelector('.w-right');
+  if(!wr) return;
+  const div = document.createElement('div');
+  div.innerHTML = `
+    <div class="w-divider"></div>
+    <div id="spConnectWrap" style="display:flex;align-items:center;gap:8px;">
+      <div id="spStatus" style="font-size:11px;color:rgba(255,255,255,.75);white-space:nowrap;">SharePoint: Not connected</div>
+      <button id="spBtn" onclick="spToggle()" style="background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.4);color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:12px;cursor:pointer;white-space:nowrap;">Connect</button>
+    </div>`;
+  wr.appendChild(div.firstElementChild);
+  wr.appendChild(div.lastElementChild);
+})();
+
+// ── inject SharePoint sections into sidebar and content ──
+(function injectSPSections(){
+  // SP Announcements widget in sidebar (before quick links)
+  const ql = document.querySelector('.sidebar-col .widget:last-child');
+  if(ql){
+    const w = document.createElement('div');
+    w.id = 'spAnnouncementsWidget';
+    w.style.display = 'none';
+    w.innerHTML = `
+      <div class="widget">
+        <div class="w-hdr"><span class="w-title">📢 Announcements</span><a class="w-more" href="#">View all →</a></div>
+        <div class="w-body" id="spAnnList"><div style="font-size:12px;color:var(--text-muted);text-align:center;padding:10px;">Loading…</div></div>
+      </div>`;
+    ql.parentNode.insertBefore(w.firstElementChild, ql);
+  }
+
+  // SP Projects widget
+  const hsse = document.querySelector('.hsse-kpis');
+  if(hsse){
+    const sec = document.createElement('div');
+    sec.id = 'spProjectsSection';
+    sec.style.display='none';
+    sec.className = 'sec';
+    sec.innerHTML = `
+      <div class="sec-hdr"><span class="sec-title">🏗️ Active Projects</span><a class="sec-more" href="#">View all →</a></div>
+      <div id="spProjectsGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;"></div>`;
+    hsse.closest('.sec').before(sec);
+  }
+})();
+
+// ── MSAL init ──
+function initMsal(){
+  if(SP_CONFIG.clientId==='PASTE_CLIENT_ID_HERE') return false;
+  try{
+    msalApp = new msal.PublicClientApplication({
+      auth:{ clientId:SP_CONFIG.clientId, authority:`https://login.microsoftonline.com/${SP_CONFIG.tenantId}`, redirectUri: window.location.href.split('?')[0] },
+      cache:{ cacheLocation:'localStorage', storeAuthStateInCookie:true }
+    });
+    return true;
+  }catch(e){ console.error('MSAL init failed',e); return false; }
+}
+
+async function spToggle(){
+  if(spAccount){ spSignOut(); return; }
+  spSignIn();
+}
+
+async function spSignIn(){
+  if(!initMsal()){ alert('SharePoint not configured yet.\n\nAsk your IT admin for the Client ID and Tenant ID, then open portal.html in a text editor and paste them into the SP_CONFIG section at the bottom of the file.'); return; }
+  setSpStatus('Connecting…','rgba(255,255,255,.75)');
+  try{
+    const resp = await msalApp.loginPopup({ scopes: SP_SCOPES });
+    spAccount = resp.account;
+    setSpStatus('Connected — '+spAccount.name.split(' ')[0],'#7FE8A0');
+    document.getElementById('spBtn').textContent = 'Disconnect';
+    await loadAllSPData();
+  }catch(e){
+    setSpStatus('Connection failed','#FFB3B3');
+    console.error(e);
+  }
+}
+
+function spSignOut(){
+  if(msalApp && spAccount) msalApp.logout({ account: spAccount });
+  spAccount = null; spSiteId = null;
+  setSpStatus('Not connected','rgba(255,255,255,.75)');
+  document.getElementById('spBtn').textContent = 'Connect';
+  document.getElementById('spAnnouncementsWidget').style.display='none';
+  document.getElementById('spProjectsSection').style.display='none';
+}
+
+function setSpStatus(msg,color){
+  const el=document.getElementById('spStatus');
+  if(el){el.textContent='SharePoint: '+msg;el.style.color=color||'rgba(255,255,255,.75)';}
+}
+
+async function getToken(){
+  if(!msalApp||!spAccount) return null;
+  try{
+    const r = await msalApp.acquireTokenSilent({ scopes:SP_SCOPES, account:spAccount });
+    return r.accessToken;
+  }catch(e){
+    try{
+      const r = await msalApp.acquireTokenPopup({ scopes:SP_SCOPES });
+      return r.accessToken;
+    }catch(e2){ return null; }
+  }
+}
+
+async function graphGet(path){
+  const token = await getToken();
+  if(!token) return null;
+  const res = await fetch(GRAPH+path,{ headers:{ Authorization:'Bearer '+token }});
+  if(!res.ok) throw new Error(res.status+' '+path);
+  return res.json();
+}
+
+// ── resolve site ID from URL ──
+async function getSiteId(){
+  if(spSiteId) return spSiteId;
+  const url = new URL(SP_CONFIG.siteUrl);
+  const host = url.hostname;
+  const path = url.pathname.replace(/\/$/, '');
+  const data = await graphGet(`/sites/${host}:${path}`);
+  spSiteId = data?.id;
+  return spSiteId;
+}
+
+// ── load everything ──
+async function loadAllSPData(){
+  setSpStatus('Syncing…','#FFDD80');
+  try{
+    await Promise.all([
+      loadSPNews(),
+      loadSPAnnouncements(),
+      loadSPCalendar(),
+      loadSPProjects(),
+      loadSPDocuments(),
+    ]);
+    setSpStatus('Connected — '+spAccount.name.split(' ')[0],'#7FE8A0');
+    // auto-refresh SP data every 5 minutes
+    setInterval(loadAllSPData, 300000);
+  }catch(e){
+    console.error('SP load error',e);
+    setSpStatus('Partial sync — check console','#FFDD80');
+  }
+}
+
+// ── SP NEWS → Petra News tab ──
+async function loadSPNews(){
+  const siteId = await getSiteId();
+  if(!siteId) return;
+  // try site pages (SharePoint News)
+  const data = await graphGet(`/sites/${siteId}/pages?$orderby=lastModifiedDateTime desc&$top=6`);
+  const pages = data?.value?.filter(p=>p.promotedState===2||p['@odata.type']==='#microsoft.graph.sitePage');
+  if(!pages?.length) return;
+
+  const items = pages.slice(0,6).map(p=>({
+    title: p.title||p.name,
+    link: p.webUrl||'#',
+    pubDate: p.lastModifiedDateTime||p.createdDateTime,
+    description: p.description||'',
+    img: p.thumbnailWebUrl||p.bannerImageWebUrl||'',
+    source: 'Petra SharePoint',
+    tag: 'Latest',
+    tagClass: '',
+  }));
+
+  // update Petra News tab if currently active
+  if(currentTab==='petra'){
+    const grid = document.getElementById('tileGrid');
+    grid.style.opacity='0';
+    setTimeout(()=>{
+      grid.innerHTML = items.map((item,i)=>tileHTML(item,i,item.tag,item.tagClass,item.source)).join('');
+      grid.style.transition='opacity .4s';grid.style.opacity='1';
+    },200);
+  }
+  // cache for tab switching
+  window._spNewsItems = items;
+}
+
+// ── SP ANNOUNCEMENTS → sidebar widget ──
+async function loadSPAnnouncements(){
+  const siteId = await getSiteId();
+  if(!siteId) return;
+  // look for a list named Announcements
+  const lists = await graphGet(`/sites/${siteId}/lists?$filter=displayName eq 'Announcements'`);
+  const listId = lists?.value?.[0]?.id;
+  if(!listId) return;
+
+  const items = await graphGet(`/sites/${siteId}/lists/${listId}/items?$expand=fields&$orderby=fields/Created desc&$top=5`);
+  if(!items?.value?.length) return;
+
+  const widget = document.getElementById('spAnnouncementsWidget');
+  const list   = document.getElementById('spAnnList');
+  if(!widget||!list) return;
+
+  const icons=['📌','📋','📣','🔔','📢'];
+  list.innerHTML = items.value.map((item,i)=>{
+    const f=item.fields;
+    return `<div class="cal-ev" style="margin-bottom:6px;" onclick="openModal({title:'${esc(f.Title)}',tag:'Announcement',tagClass:'',source:'SharePoint',date:'${timeAgo(f.Created)}',img:'',emoji:'${icons[i%5]}',excerpt:'${esc(f.Body||f.Description||'')}',link:'${esc(item.webUrl||'#')}'})">
+      <div class="cal-dot"></div>
+      <div>
+        <div class="cal-ev-text">${f.Title||'Announcement'}</div>
+        <div class="cal-ev-date">${timeAgo(f.Created)}</div>
+      </div>
+    </div>`;
+  }).join('');
+  widget.style.display='block';
+}
+
+// ── SP CALENDAR → sidebar calendar events ──
+async function loadSPCalendar(){
+  const token = await getToken();
+  if(!token) return;
+  const now = new Date().toISOString();
+  const future = new Date(Date.now()+60*86400000).toISOString();
+  const data = await graphGet(`/me/calendar/events?$filter=start/dateTime ge '${now}' and start/dateTime le '${future}'&$orderby=start/dateTime&$top=8&$select=subject,start,end,location,bodyPreview,webLink`);
+  if(!data?.value?.length) return;
+
+  const calEvDiv = document.querySelector('.cal-events');
+  if(!calEvDiv) return;
+  calEvDiv.innerHTML = data.value.map(ev=>{
+    const d=new Date(ev.start.dateTime);
+    const day=d.getDate(), mon=MONTHS[d.getMonth()].slice(0,3);
+    return `<div class="cal-ev" onclick="openModal({title:'${esc(ev.subject)}',tag:'Calendar',tagClass:'blue',source:'Outlook Calendar',date:'${day} ${mon}',img:'',emoji:'📅',excerpt:'${esc(ev.bodyPreview||'')}',link:'${esc(ev.webLink||'#')}'})">
+      <div class="cal-dot"></div>
+      <div>
+        <div class="cal-ev-text">${ev.subject}</div>
+        <div class="cal-ev-date">${day} ${mon}${ev.location?.displayName?' · '+ev.location.displayName:''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── SP PROJECTS LIST → Projects section ──
+async function loadSPProjects(){
+  const siteId = await getSiteId();
+  if(!siteId) return;
+  const lists = await graphGet(`/sites/${siteId}/lists?$filter=displayName eq 'Projects'`);
+  const listId = lists?.value?.[0]?.id;
+  if(!listId) return;
+
+  const items = await graphGet(`/sites/${siteId}/lists/${listId}/items?$expand=fields&$top=6`);
+  if(!items?.value?.length) return;
+
+  const sec  = document.getElementById('spProjectsSection');
+  const grid = document.getElementById('spProjectsGrid');
+  if(!sec||!grid) return;
+
+  const statusColor={Active:'#1A7A3C',Completed:'#1A4A8C','On Hold':'#A85A00',default:'#888'};
+  grid.innerHTML = items.value.map(item=>{
+    const f=item.fields;
+    const status=f.Status||f.ProjectStatus||'Active';
+    const sc=statusColor[status]||statusColor.default;
+    return `<div class="pol-tile" onclick="openModal({title:'${esc(f.Title)}',tag:'Project',tagClass:'blue',source:'SharePoint Projects',date:'${esc(f.Modified||'')}',img:'',emoji:'🏗️',excerpt:'${esc(f.Description||f.Body||'')}',link:'#'})">
+      <div class="pol-icon">🏗️</div>
+      <div>
+        <div class="pol-name">${f.Title||'Project'}</div>
+        <div class="pol-ver" style="display:flex;align-items:center;gap:6px;margin-top:4px;">
+          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${sc};flex-shrink:0;"></span>
+          <span>${status}</span>
+          ${f.DueDate?`<span>· Due ${new Date(f.DueDate).toLocaleDateString('en-MY',{day:'numeric',month:'short'})}</span>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  sec.style.display='block';
+}
+
+// ── SP DOCUMENTS → Policies section ──
+async function loadSPDocuments(){
+  const siteId = await getSiteId();
+  if(!siteId) return;
+  // try a library called Policies or Documents
+  const libs = await graphGet(`/sites/${siteId}/lists?$filter=displayName eq 'Policies' or displayName eq 'Policy Documents'`);
+  const libId = libs?.value?.[0]?.id;
+  if(!libId) return;
+
+  const items = await graphGet(`/sites/${siteId}/lists/${libId}/items?$expand=fields&$top=6&$orderby=fields/Modified desc`);
+  if(!items?.value?.length) return;
+
+  const polGrid = document.querySelector('.pol-grid');
+  if(!polGrid) return;
+
+  const icons=['📄','🛡','📋','🔒','🌿','📦'];
+  polGrid.innerHTML = items.value.map((item,i)=>{
+    const f=item.fields;
+    const modified=f.Modified?new Date(f.Modified).toLocaleDateString('en-MY',{day:'numeric',month:'short',year:'numeric'}):'';
+    const isNew=f.Modified&&(Date.now()-new Date(f.Modified))<30*86400000;
+    return `<div class="pol-tile" onclick="window.open('${item.webUrl||'#'}','_blank')">
+      <div class="pol-icon">${icons[i%6]}</div>
+      <div>
+        <div class="pol-name">${f.Title||f.FileLeafRef||'Document'}${isNew?'<span class="pol-new">NEW</span>':''}</div>
+        <div class="pol-ver">Updated ${modified}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── helper: safe string for onclick attrs ──
+function esc(s){ return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,' ').slice(0,300); }
+
+// ── patch tab click to use SP news if available ──
+const _origTabClick = document.querySelectorAll('.news-tab');
+_origTabClick.forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    if(tab.dataset.tab==='petra' && window._spNewsItems?.length){
+      document.getElementById('tileGrid').innerHTML=window._spNewsItems.map((item,i)=>tileHTML(item,i,item.tag,item.tagClass,item.source)).join('');
+      document.getElementById('tileGrid').style.opacity='1';
+    }
+  });
+});
+
+// ── auto-reconnect on page load if previously signed in ──
+window.addEventListener('load',()=>{
+  if(SP_CONFIG.clientId==='PASTE_CLIENT_ID_HERE') return;
+  if(!initMsal()) return;
+  const accounts = msalApp.getAllAccounts();
+  if(accounts.length){
+    spAccount = accounts[0];
+    setSpStatus('Connected — '+spAccount.name.split(' ')[0],'#7FE8A0');
+    document.getElementById('spBtn').textContent='Disconnect';
+    loadAllSPData();
+  }
+});
+</script>
+</body>
+</html>
