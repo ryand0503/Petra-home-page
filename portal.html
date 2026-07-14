@@ -734,7 +734,11 @@ const io=new IntersectionObserver(entries=>{if(entries[0].isIntersecting){animat
 io.observe(hsseSec);
 
 // ── NEWS CONFIG ──
-const PROXY='https://api.rss2json.com/v1/api.json?rss_url=';
+const PROXIES=[
+  'https://api.rss2json.com/v1/api.json?rss_url=',
+  'https://rss2json.com/api.json?rss_url=',
+];
+let PROXY=PROXIES[0];
 let currentTab='petra';
 let refreshTimer=null;
 let countdownTimer=null;
@@ -756,12 +760,12 @@ const FEEDS={
 };
 
 const PETRA_NEWS=[
-  {title:'Petra Energy Secures RM 420M HUC Contract for Kasawari Gas Development',link:'https://www.petradirect.com.my',pubDate:new Date(Date.now()-4*86400000).toISOString(),description:'Petra Energy Berhad has been awarded the Hook-Up and Commissioning scope by PETRONAS Carigali for the Kasawari Gas Development — one of the largest offshore contracts in the company\'s history. The contract spans 36 months and covers all HUC activities on the Kasawari-A and Kasawari-B platforms in the South China Sea.',source:'Corporate Affairs',tag:'Breaking',tagClass:'',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Petronas_Twin_Towers%2C_Kuala_Lumpur_%28night%29.jpg/640px-Petronas_Twin_Towers%2C_Kuala_Lumpur_%28night%29.jpg'},
-  {title:'Net Zero Roadmap 2035 — Q2 Progress Report Released',link:'#',pubDate:new Date(Date.now()-6*86400000).toISOString(),description:'Petra Energy has released its Q2 2025 progress report on the Net Zero Roadmap 2035. Scope 1 and 2 emissions are down 8.2% year-on-year, ahead of the 7% interim target.',source:'Sustainability',tag:'ESG',tagClass:'green',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Sunset_over_the_sea.jpg/640px-Sunset_over_the_sea.jpg'},
-  {title:'Offshore Crew Change Protocol Updated — Effective 15 July 2025',link:'#',pubDate:new Date(Date.now()-7*86400000).toISOString(),description:'Effective 15 July, all offshore crew change rotations will follow the updated 28/28 schedule using only PETRONAS-approved logistics providers.',source:'Operations',tag:'Operations',tagClass:'',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/Offshore_platform.jpg/640px-Offshore_platform.jpg'},
-  {title:'Q2 FY2025 Financial Results — Revenue Up 14% YoY to RM 1.2 Billion',link:'#',pubDate:new Date(Date.now()-9*86400000).toISOString(),description:'Petra Energy Berhad reported revenue of RM 1.2 billion for Q2 FY2025, up 14.2% from Q2 FY2024. EBITDA margin improved to 18.3% from 16.1%.',source:'Finance',tag:'Finance',tagClass:'amber',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Kuala_Lumpur_skyline.jpg/640px-Kuala_Lumpur_skyline.jpg'},
-  {title:'SAP S/4HANA Go-Live Confirmed for 1 October 2025',link:'#',pubDate:new Date(Date.now()-11*86400000).toISOString(),description:'The Digital Transformation Office has confirmed the SAP S/4HANA go-live date. All employees must complete the mandatory SAP e-learning modules by 31 August.',source:'IT Division',tag:'Technology',tagClass:'blue',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/SAP_2011_logo.svg/640px-SAP_2011_logo.svg.png'},
-  {title:'Petra Excellence Awards 2025 — Nominations Now Open',link:'#',pubDate:new Date(Date.now()-12*86400000).toISOString(),description:'Nominations for the Petra Excellence Awards 2025 are now open across 7 categories including the new Sustainability Champion award. Deadline 25 July 2025.',source:'Corporate Comms',tag:'People',tagClass:'green',img:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Group_of_people_icon.svg/640px-Group_of_people_icon.svg.png'},
+  {title:'Petra Energy Secures RM 420M HUC Contract for Kasawari Gas Development',link:'https://www.petradirect.com.my',pubDate:new Date(Date.now()-4*86400000).toISOString(),description:'Petra Energy Berhad has been awarded the Hook-Up and Commissioning scope by PETRONAS Carigali for the Kasawari Gas Development — one of the largest offshore contracts in the company\'s history. The contract spans 36 months and covers all HUC activities on the Kasawari-A and Kasawari-B platforms in the South China Sea.',source:'Corporate Affairs',tag:'Breaking',tagClass:'',img:'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80'},
+  {title:'Net Zero Roadmap 2035 — Q2 Progress Report Released',link:'#',pubDate:new Date(Date.now()-6*86400000).toISOString(),description:'Petra Energy has released its Q2 2025 progress report on the Net Zero Roadmap 2035. Scope 1 and 2 emissions are down 8.2% year-on-year, ahead of the 7% interim target.',source:'Sustainability',tag:'ESG',tagClass:'green',img:'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=800&q=80'},
+  {title:'Offshore Crew Change Protocol Updated — Effective 15 July 2025',link:'#',pubDate:new Date(Date.now()-7*86400000).toISOString(),description:'Effective 15 July, all offshore crew change rotations will follow the updated 28/28 schedule using only PETRONAS-approved logistics providers.',source:'Operations',tag:'Operations',tagClass:'',img:'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&q=80'},
+  {title:'Q2 FY2025 Financial Results — Revenue Up 14% YoY to RM 1.2 Billion',link:'#',pubDate:new Date(Date.now()-9*86400000).toISOString(),description:'Petra Energy Berhad reported revenue of RM 1.2 billion for Q2 FY2025, up 14.2% from Q2 FY2024. EBITDA margin improved to 18.3% from 16.1%.',source:'Finance',tag:'Finance',tagClass:'amber',img:'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80'},
+  {title:'SAP S/4HANA Go-Live Confirmed for 1 October 2025',link:'#',pubDate:new Date(Date.now()-11*86400000).toISOString(),description:'The Digital Transformation Office has confirmed the SAP S/4HANA go-live date. All employees must complete the mandatory SAP e-learning modules by 31 August.',source:'IT Division',tag:'Technology',tagClass:'blue',img:'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80'},
+  {title:'Petra Excellence Awards 2025 — Nominations Now Open',link:'#',pubDate:new Date(Date.now()-12*86400000).toISOString(),description:'Nominations for the Petra Excellence Awards 2025 are now open across 7 categories including the new Sustainability Champion award. Deadline 25 July 2025.',source:'Corporate Comms',tag:'People',tagClass:'green',img:'https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&q=80'},
 ];
 
 const TAG_CLASSES=['','amber','green','blue','grey','','amber','green'];
@@ -880,7 +884,8 @@ async function renderFeedNews(feedKey,silent=false){
     },silent?0:300);
   }catch(e){
     grid.style.opacity='1';
-    grid.innerHTML=`<div class="feed-err">⚠️ Could not load live feed — check your internet connection.</div>`;
+    grid.innerHTML=PETRA_NEWS.map((item,i)=>tileHTML(item,i,item.tag,item.tagClass,item.source)).join('');
+    updateRefreshUI();
   }
 }
 
