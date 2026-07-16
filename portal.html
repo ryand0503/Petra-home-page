@@ -1,10 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Petra Energy — Company Portal</title>
-<script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
 <style>
 :root {
   --red:#C0111F; --red-dark:#8C0C17; --red-mid:#A50F1A;
@@ -308,7 +307,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg-page);color
 
 <!-- TOPBAR -->
 <header class="topbar">
-  <a class="logo" href="#">
+  <a class="logo" href="#" onclick="event.preventDefault();switchPage('home')">
     <div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M12 2L4 7v10l8 5 8-5V7L12 2zm0 2.5l5.5 3.44v6.12L12 17.5l-5.5-3.44V7.94L12 4.5z"/></svg></div>
     <div><span class="logo-name">Petra Energy</span><span class="logo-sub">Intranet Portal</span></div>
   </a>
@@ -329,18 +328,24 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg-page);color
 
 <!-- NAVBAR -->
 <nav class="navbar">
-  <a class="nav-item active" href="#">Home</a>
-  <a class="nav-item" href="#">Petra News</a>
-  <a class="nav-item" href="#">HSSE <span class="nav-dot"></span></a>
-  <a class="nav-item" href="#">Industry News</a>
-  <a class="nav-item" href="#">HR &amp; Benefits</a>
-  <a class="nav-item" href="#">Projects</a>
-  <a class="nav-item" href="#">Gallery</a>
-  <a class="nav-item" href="#">Policies</a>
-  <a class="nav-item" href="#">Corporate Calendar</a>
-  <a class="nav-item" href="#">Documents</a>
+  <a class="nav-item active" href="#" data-page="home" onclick="event.preventDefault();switchPage('home')">Home</a>
+  <a class="nav-item" href="#" data-page="news" onclick="event.preventDefault();switchPage('news')">Petra News</a>
+  <a class="nav-item" href="#" data-page="hsse" onclick="event.preventDefault();switchPage('hsse')">HSSE <span class="nav-dot"></span></a>
+  <a class="nav-item" href="#" data-page="industry" onclick="event.preventDefault();switchPage('industry')">Industry News</a>
+  <a class="nav-item" href="#" data-page="hr" onclick="event.preventDefault();switchPage('hr')">HR &amp; Benefits</a>
+  <a class="nav-item" href="#" data-page="projects" onclick="event.preventDefault();switchPage('projects')">Projects</a>
+  <a class="nav-item" href="#" data-page="gallery" onclick="event.preventDefault();switchPage('gallery')">Gallery</a>
+  <a class="nav-item" href="#" data-page="policies" onclick="event.preventDefault();switchPage('policies')">Policies</a>
+  <a class="nav-item" href="#" data-page="calendar" onclick="event.preventDefault();switchPage('calendar')">Corporate Calendar</a>
+  <a class="nav-item" href="#" data-page="documents" onclick="event.preventDefault();switchPage('documents')">Documents</a>
 </nav>
 
+<div style="background:#C0111F;color:white;padding:10px 20px;text-align:center;font-size:13px;">
+  🔧 <button onclick="alert('JS OK!')" style="background:white;color:#C0111F;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-weight:bold;">Test JS</button>
+  &nbsp;<button onclick="var r=[];r.push('switchPage: '+typeof switchPage);r.push('PAGE_MAP: '+(typeof PAGE_MAP!='undefined'?'OK':'MISSING'));r.push('ALL_SECTIONS: '+(typeof ALL_SECTIONS!='undefined'?'OK':'MISSING'));var h=document.getElementById('sec-hsse');r.push('sec-hsse: '+(h?'found':'NOT FOUND'));alert(r.join('\n'));" style="background:white;color:#C0111F;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-weight:bold;">Diagnose</button>
+  &nbsp;<button onclick="switchPage('hsse')" style="background:white;color:#C0111F;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-weight:bold;">Go to HSSE</button>
+  &nbsp;<button onclick="switchPage('home')" style="background:white;color:#C0111F;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-weight:bold;">Home</button>
+</div>
 <main class="page">
 
   <!-- WELCOME -->
@@ -389,7 +394,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg-page);color
   <div class="content-col">
 
     <!-- NEWS SECTION (tabbed) -->
-    <div class="sec">
+    <div class="sec" id="sec-news" data-section="home news industry">
       <div class="news-tabs" style="display:flex;align-items:center;justify-content:space-between;">
         <div style="display:flex;gap:4px;border-bottom:none;">
           <div class="news-tab active" data-tab="petra">📰 Petra News</div>
@@ -417,10 +422,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg-page);color
     </div>
 
     <!-- GALLERY -->
-    <div class="sec">
+    <div class="sec" id="sec-gallery" data-section="home gallery">
       <div class="sec-hdr">
         <span class="sec-title">📸 Petra Group Gallery</span>
-        <a class="sec-more" href="#">View all photos →</a>
+        <a class="sec-more" href="#" onclick="event.preventDefault();switchPage('gallery')">View all photos →</a>
       </div>
       <div class="gal-grid" id="galGrid">
         <div class="gal-tile" onclick="openLightbox('g1','Q2 Town Hall — KL HQ, Jun 2025')"><canvas id="g1"></canvas><div class="gal-overlay"><div class="gal-caption">Q2 Town Hall — KL HQ · Jun 2025</div></div><button class="gal-zoom-btn">🔍</button></div>
@@ -433,10 +438,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg-page);color
     </div>
 
     <!-- HSSE -->
-    <div class="sec">
+    <div class="sec" id="sec-hsse" data-section="home hsse">
       <div class="sec-hdr">
         <span class="sec-title">🛡 HSSE Dashboard</span>
-        <a class="sec-more" href="#">Full report →</a>
+        <a class="sec-more" href="#" onclick="event.preventDefault();switchPage('hsse')">Full report →</a>
       </div>
       <div class="hsse-kpis">
         <div class="hk g" onclick="openModal({title:'LTI-Free Achievement',tag:'Safety',tagClass:'',source:'HSSE Division',date:'July 2025',img:'',emoji:'🛡',excerpt:'Petra Energy has achieved 847 consecutive LTI-Free days across all operations as of 14 July 2025. This milestone covers all offshore platforms, shore bases, and HQ offices. The streak represents our strongest safety performance in company history, driven by the HEART safety culture programme launched in 2022.'})">
@@ -485,10 +490,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg-page);color
     </div>
 
     <!-- POLICIES -->
-    <div class="sec">
+    <div class="sec" id="sec-policies" data-section="home policies">
       <div class="sec-hdr">
         <span class="sec-title">📋 Policies &amp; Procedures</span>
-        <a class="sec-more" href="#">Document library →</a>
+        <a class="sec-more" href="#" onclick="event.preventDefault();switchPage('documents')">Document library →</a>
       </div>
       <div class="pol-grid">
         <div class="pol-tile" onclick="openModal({title:'HSSE Management System Policy',tag:'Policy',tagClass:'',source:'HSSE Division',date:'Rev. 5 · Jun 2025',img:'',emoji:'🛡',excerpt:'The Petra Energy HSSE Management System Policy (Rev. 5) sets out the company\'s commitments and framework for managing health, safety, security and environmental risks across all operations. This revision includes updated requirements for Management of Change (MOC), enhanced contractor safety management provisions, and alignment with ISO 45001:2018. All employees must acknowledge receipt by 31 August 2025.'})">
@@ -512,6 +517,106 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg-page);color
       </div>
     </div>
 
+    <!-- HR & BENEFITS PAGE -->
+    <div class="sec" id="sec-hr" data-section="hr" style="display:none">
+      <div class="sec-hdr"><span class="sec-title">💼 HR &amp; Benefits</span></div>
+      <div class="pol-grid">
+        <div class="pol-tile" onclick="openModal({title:'Leave Entitlements 2025',tag:'HR',tagClass:'blue',source:'Human Resources',date:'Jan 2025',img:'',emoji:'🏖',excerpt:'Annual Leave: 16 days (Grade 1-4), 20 days (Grade 5+). Medical Leave: 14 days (outpatient), 60 days (hospitalisation). Emergency Leave: 3 days. Maternity/Paternity: 90/7 days. All leave applications must be submitted via HRiQ at least 3 working days in advance except emergency leave.'})">
+          <div class="pol-icon">🏖</div><div><div class="pol-name">Leave Entitlements 2025</div><div class="pol-ver">Effective Jan 2025</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'Medical &amp; Hospitalisation Benefits',tag:'HR',tagClass:'blue',source:'Human Resources',date:'Jan 2025',img:'',emoji:'🏥',excerpt:'Outpatient medical claims up to RM 3,000/year at panel clinics. Hospitalisation covered up to RM 150,000/year per employee under the group medical insurance. Dependants (spouse and up to 3 children) covered under the scheme. Dental claims up to RM 500/year. Optical claims up to RM 300/year.'})">
+          <div class="pol-icon">🏥</div><div><div class="pol-name">Medical &amp; Hospitalisation Benefits</div><div class="pol-ver">Panel Clinics &amp; Insurance</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'Performance Management Cycle',tag:'HR',tagClass:'amber',source:'Human Resources',date:'2025',img:'',emoji:'📈',excerpt:'Goal setting: January. Mid-year review: July. Year-end appraisal: November-December. Ratings: Outstanding / Exceeds Expectations / Meets Expectations / Needs Improvement. Increment and bonus payout in February following appraisal. All objectives must be set in the HR system by 31 January.'})">
+          <div class="pol-icon">📈</div><div><div class="pol-name">Performance Management Cycle</div><div class="pol-ver">Annual Review Process</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'Training &amp; Development',tag:'HR',tagClass:'green',source:'Human Resources',date:'2025',img:'',emoji:'🎓',excerpt:'Each employee is entitled to a minimum of 40 training hours per year. Technical and leadership programmes are available through the Petra Learning Centre. Sponsorship for professional certifications (PMP, CIMA, etc.) available for Grade 5 and above — apply via your HoD. BOSIET and offshore safety certifications are mandatory and fully funded by the company.'})">
+          <div class="pol-icon">🎓</div><div><div class="pol-name">Training &amp; Development</div><div class="pol-ver">40 Hours Min Per Year</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'Flexible Work Arrangement',tag:'HR',tagClass:'',source:'Human Resources',date:'Aug 2025',img:'',emoji:'🏠',excerpt:'Effective 1 August 2025, eligible employees (Grade 3 and above, non-operations roles) may apply for up to 2 days work-from-home per week. Applications to be approved by HoD and HR. Core hours: 9am–4pm on all days including WFH days. Full policy in HR Policy Manual Rev. 7.'})">
+          <div class="pol-icon">🏠</div><div><div class="pol-name">Flexible Work Arrangement<span class="pol-new">NEW</span></div><div class="pol-ver">Effective Aug 2025</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'Employee Assistance Programme',tag:'HR',tagClass:'green',source:'Human Resources',date:'2025',img:'',emoji:'💬',excerpt:'Petra Energy partners with AIA to provide free, confidential counselling services for all employees and immediate family members. Up to 6 sessions per year. Contact the EAP hotline at 1-800-88-EAP1 or email eap@petraenergy.com.my. All sessions are strictly confidential — HR and management have no visibility.'})">
+          <div class="pol-icon">💬</div><div><div class="pol-name">Employee Assistance Programme</div><div class="pol-ver">Free Confidential Counselling</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECTS PAGE -->
+    <div class="sec" id="sec-projects" data-section="projects" style="display:none">
+      <div class="sec-hdr"><span class="sec-title">🏗 Active Projects</span></div>
+      <div class="pol-grid">
+        <div class="pol-tile" onclick="openModal({title:'Kasawari HUC — Kasawari-A &amp; B Platforms',tag:'Active',tagClass:'green',source:'Operations',date:'2025–2028',img:'',emoji:'🛢',excerpt:'Hook-Up and Commissioning contract for PETRONAS Carigali. Scope covers Kasawari-A and Kasawari-B platforms in the South China Sea. Contract value: RM 420M. Duration: 36 months from July 2025. Project Director: Ir. Hairul Nizam. Current phase: Mobilisation.'})">
+          <div class="pol-icon">🛢</div><div><div class="pol-name">Kasawari HUC<span class="pol-new">NEW</span></div><div class="pol-ver">PETRONAS Carigali · 2025–2028</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'Cendor Phase 3 — Brownfield HUC',tag:'Active',tagClass:'green',source:'Operations',date:'2024–2026',img:'',emoji:'⚙️',excerpt:'Brownfield Hook-Up and Commissioning for the Cendor Phase 3 expansion. Adding two new wellhead platforms and a living quarters module upgrade. Contract value: RM 180M. Currently 62% complete. On schedule for mechanical completion in Q1 2026.'})">
+          <div class="pol-icon">⚙️</div><div><div class="pol-name">Cendor Phase 3 Brownfield HUC</div><div class="pol-ver">62% Complete · 2024–2026</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'Berantai FPSO Life Extension',tag:'Active',tagClass:'amber',source:'Engineering',date:'2025–2026',img:'',emoji:'🚢',excerpt:'Major life extension works on the Berantai FPSO covering hull structural repairs, process equipment overhaul, and safety system upgrades. Duration: 18 months. Current status: Engineering 85% complete; Procurement ongoing. Dry-dock scheduled for Q4 2025.'})">
+          <div class="pol-icon">🚢</div><div><div class="pol-name">Berantai FPSO Life Extension</div><div class="pol-ver">Engineering Phase · 2025–2026</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'SAP S/4HANA Digital Transformation',tag:'Internal',tagClass:'blue',source:'IT Division',date:'2025',img:'',emoji:'💻',excerpt:'Company-wide ERP transformation replacing legacy systems with SAP S/4HANA. Go-live: 1 October 2025. Modules: Finance, Procurement, HR, Project Systems. Change management and training ongoing. All employees must complete mandatory e-learning by 31 August 2025.'})">
+          <div class="pol-icon">💻</div><div><div class="pol-name">SAP S/4HANA Transformation</div><div class="pol-ver">Go-Live: 1 Oct 2025</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'Miri Logistics Base Upgrade',tag:'Active',tagClass:'',source:'Logistics',date:'2025',img:'',emoji:'🏭',excerpt:'Expansion and upgrade of the Miri Shore Base including new warehouse facilities, improved laydown area, and upgraded crane infrastructure. Budget: RM 22M. Completion target: December 2025. Contractor: TBD (tender closing August 2025).'})">
+          <div class="pol-icon">🏭</div><div><div class="pol-name">Miri Logistics Base Upgrade</div><div class="pol-ver">Tender Phase · 2025</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'Net Zero Roadmap 2035 — Implementation',tag:'ESG',tagClass:'green',source:'Sustainability',date:'2025–2035',img:'',emoji:'🌿',excerpt:'Long-term programme to achieve net zero Scope 1 and 2 emissions by 2035. 2025 workstreams: solar installation at KL HQ and Miri base, methane leak detection programme at all offshore assets, and carbon offset pilot with Bursa Carbon Exchange. Q2 2025: 8.2% reduction achieved vs baseline.'})">
+          <div class="pol-icon">🌿</div><div><div class="pol-name">Net Zero Roadmap 2035</div><div class="pol-ver">ESG · Long-term Programme</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOCUMENTS PAGE -->
+    <div class="sec" id="sec-documents" data-section="documents" style="display:none">
+      <div class="sec-hdr"><span class="sec-title">📁 Documents &amp; Forms</span></div>
+      <div class="pol-grid">
+        <div class="pol-tile" onclick="openModal({title:'Leave Application Form',tag:'HR',tagClass:'blue',source:'Human Resources',date:'2025',img:'',emoji:'📝',excerpt:'Submit leave applications via HRiQ online system. For offline submission, download the Leave Application Form (HR-F-001), complete and obtain HoD signature, then submit to HR at least 3 working days before leave commencement. Emergency leave may be applied retroactively within 24 hours.'})">
+          <div class="pol-icon">📝</div><div><div class="pol-name">Leave Application Form (HR-F-001)</div><div class="pol-ver">Submit via HRiQ or HR Department</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'Travel &amp; Expense Claim Form',tag:'Finance',tagClass:'amber',source:'Finance Division',date:'2025',img:'',emoji:'✈️',excerpt:'All business travel claims must be submitted within 14 days of return using the T&amp;E Claim Form (FIN-F-003). Attach all original receipts. Claims above RM 5,000 require Division Head approval. Per diem rates: Domestic RM 120/day, International varies by country. Submit to Finance via SAP Concur.'})">
+          <div class="pol-icon">✈️</div><div><div class="pol-name">Travel &amp; Expense Claim (FIN-F-003)</div><div class="pol-ver">Submit within 14 days of return</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'HSSE Incident Report Form',tag:'HSSE',tagClass:'',source:'HSSE Division',date:'2025',img:'',emoji:'🛡',excerpt:'All incidents, near-misses, and unsafe conditions must be reported immediately using the HSSE Incident Report Form (HSSE-F-001). For life-threatening emergencies, call the 24-hour HSSE Hotline first: +60 3-2166 8888. Initial report within 1 hour, full investigation report within 5 working days.'})">
+          <div class="pol-icon">🛡</div><div><div class="pol-name">HSSE Incident Report (HSSE-F-001)</div><div class="pol-ver">Report all incidents immediately</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'Purchase Requisition Form',tag:'Procurement',tagClass:'amber',source:'Supply Chain',date:'2025',img:'',emoji:'📦',excerpt:'All purchases above RM 500 must be initiated via Purchase Requisition (PR) in SAP. For items below RM 500, use the Petty Cash Request form. PRs above RM 50,000 require three quotations and Supply Chain approval. PRs above RM 500,000 go through the Tender Committee.'})">
+          <div class="pol-icon">📦</div><div><div class="pol-name">Purchase Requisition (SAP)</div><div class="pol-ver">Procurement via SAP for RM 500+</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'Medical Claim Form',tag:'HR',tagClass:'blue',source:'Human Resources',date:'2025',img:'',emoji:'🏥',excerpt:'For non-panel clinic visits, submit medical claims using HR-F-005 within 30 days of treatment. Attach original receipt and medical certificate. Annual limit: RM 3,000 outpatient. Submit to HR Admin. Panel clinic visits are direct-billing — no claim form needed.'})">
+          <div class="pol-icon">🏥</div><div><div class="pol-name">Medical Claim Form (HR-F-005)</div><div class="pol-ver">Non-panel clinics · 30-day submission</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'Training Nomination Form',tag:'HR',tagClass:'green',source:'Human Resources',date:'2025',img:'',emoji:'🎓',excerpt:'To nominate employees for internal or external training, complete the Training Nomination Form (HR-F-008) and obtain HoD approval. Submit to HR Learning &amp; Development at least 2 weeks before training date. For external training above RM 2,000, attach a cost justification. Bond-back agreements apply for programmes above RM 10,000.'})">
+          <div class="pol-icon">🎓</div><div><div class="pol-name">Training Nomination Form (HR-F-008)</div><div class="pol-ver">Submit 2 weeks before training</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALENDAR PAGE -->
+    <div class="sec" id="sec-calendar" data-section="calendar" style="display:none">
+      <div class="sec-hdr"><span class="sec-title">📅 Corporate Calendar</span></div>
+      <div class="pol-grid">
+        <div class="pol-tile" onclick="openModal({title:'Q3 2025 Business Review',tag:'Corporate',tagClass:'',source:'Strategy Division',date:'15 Jul 2025',img:'',emoji:'📊',excerpt:'The Q3 2025 Business Review will be held on 15 July at Level 28, KL HQ. All Division Heads and Department Managers are required to attend. Each division to submit Q3 performance decks by 13 July (COB). Full-day session; business attire required.'})">
+          <div class="pol-icon">📊</div><div><div class="pol-name">Q3 Business Review</div><div class="pol-ver">15 Jul 2025 · HQ Level 28</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'Annual Fire Drill 2025',tag:'HSSE',tagClass:'',source:'HSSE Division',date:'18 Jul 2025',img:'',emoji:'🔥',excerpt:'The annual fire drill will be conducted simultaneously across all Petra Energy offices on 18 July 2025. Evacuation at KL HQ: 10:00 AM sharp. Muster points as per the Emergency Response Plan. All employees must participate. Re-entry only upon All Clear from the Emergency Response Team.'})">
+          <div class="pol-icon">🔥</div><div><div class="pol-name">Annual Fire Drill</div><div class="pol-ver">18 Jul 2025 · All Buildings</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'Leadership in Energy Forum 2025',tag:'Industry',tagClass:'amber',source:'Corporate Affairs',date:'22 Jul 2025',img:'',emoji:'🏛️',excerpt:'Petra Energy is a Gold Sponsor of the Leadership in Energy Forum 2025 at KLCC Convention Centre on 22 July. Our CEO will deliver a keynote on Malaysia\'s offshore future. Employees may request tickets through Corporate Affairs.'})">
+          <div class="pol-icon">🏛️</div><div><div class="pol-name">Leadership in Energy Forum</div><div class="pol-ver">22 Jul 2025 · KLCC</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'Hari Raya Haji — Public Holiday',tag:'Holiday',tagClass:'green',source:'HR Division',date:'31 Jul 2025',img:'',emoji:'🌙',excerpt:'Hari Raya Haji falls on 31 July 2025. All offices will be closed. Offshore operations to continue on normal rotation. Emergency contacts remain active. Next working day: 1 August 2025.'})">
+          <div class="pol-icon">🌙</div><div><div class="pol-name">Hari Raya Haji — Public Holiday</div><div class="pol-ver">31 Jul 2025 · Office Closed</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'SAP S/4HANA Go-Live',tag:'IT',tagClass:'blue',source:'IT Division',date:'1 Oct 2025',img:'',emoji:'💻',excerpt:'SAP S/4HANA goes live on 1 October 2025. All employees must complete mandatory e-learning modules by 31 August. System downtime: 28-30 September (legacy system cutover). IT helpdesk will be on extended support hours from 1–7 October.'})">
+          <div class="pol-icon">💻</div><div><div class="pol-name">SAP S/4HANA Go-Live</div><div class="pol-ver">1 Oct 2025 · Company-wide</div></div>
+        </div>
+        <div class="pol-tile" onclick="openModal({title:'Petra Excellence Awards 2025',tag:'Corporate',tagClass:'amber',source:'Corporate Comms',date:'Nov 2025',img:'',emoji:'🏆',excerpt:'The Petra Excellence Awards 2025 ceremony will be held in November 2025. Nominations are open across 7 categories including the new Sustainability Champion award. Nomination deadline: 25 July 2025. Submit nominations to corporate.comms@petraenergy.com.my.'})">
+          <div class="pol-icon">🏆</div><div><div class="pol-name">Petra Excellence Awards 2025</div><div class="pol-ver">November 2025 · Nominations Open</div></div>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /content -->
 
   <!-- SIDEBAR -->
@@ -531,7 +636,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg-page);color
     </div>
 
     <div class="widget">
-      <div class="w-hdr"><span class="w-title">Corporate Calendar</span><a class="w-more" href="#">Full view →</a></div>
+      <div class="w-hdr"><span class="w-title">Corporate Calendar</span><a class="w-more" href="#" onclick="event.preventDefault();switchPage('calendar')">Full view →</a></div>
       <div class="w-body">
         <div class="cal-month-row">
           <button class="cal-nav" onclick="changeMonth(-1)">‹</button>
@@ -560,13 +665,13 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg-page);color
       <div class="w-hdr"><span class="w-title">Quick Links</span></div>
       <div class="w-body">
         <div class="ql-list">
-          <a class="ql-item" href="#"><div class="ql-icon">📝</div><span class="ql-lbl">Leave Application (HRiQ)</span><span class="ql-arr">›</span></a>
-          <a class="ql-item" href="#"><div class="ql-icon">💰</div><span class="ql-lbl">Payslip &amp; EPF/SOCSO</span><span class="ql-arr">›</span></a>
-          <a class="ql-item" href="#"><div class="ql-icon">🛡</div><span class="ql-lbl">HSSE Incident Report</span><span class="ql-arr">›</span></a>
-          <a class="ql-item" href="#"><div class="ql-icon">📦</div><span class="ql-lbl">PR / PO Approval (SAP)</span><span class="ql-arr">›</span></a>
-          <a class="ql-item" href="#"><div class="ql-icon">✈️</div><span class="ql-lbl">Travel &amp; Expense Claims</span><span class="ql-arr">›</span></a>
-          <a class="ql-item" href="#"><div class="ql-icon">📚</div><span class="ql-lbl">Document Management</span><span class="ql-arr">›</span></a>
-          <a class="ql-item" href="#"><div class="ql-icon">🎓</div><span class="ql-lbl">Training &amp; Certification</span><span class="ql-arr">›</span></a>
+          <a class="ql-item" href="#" onclick="event.preventDefault();openModal({title:'Leave Application (HRiQ)',tag:'HR',tagClass:'blue',source:'Human Resources',date:'',img:'',emoji:'📝',excerpt:'Submit your leave online via the HRiQ system. Log in with your Petra network credentials. Go to Self Service → Leave Application. Select leave type, dates, and acting officer, then submit. Your HoD will receive an email to approve. For questions contact hr@petraenergy.com.my or ext. 2200.'})"><div class="ql-icon">📝</div><span class="ql-lbl">Leave Application (HRiQ)</span><span class="ql-arr">›</span></a>
+          <a class="ql-item" href="#" onclick="event.preventDefault();openModal({title:'Payslip & EPF/SOCSO',tag:'HR',tagClass:'blue',source:'Finance / HR',date:'',img:'',emoji:'💰',excerpt:'View and download your monthly payslip via HRiQ under Self Service → Payroll → Payslip. EPF (KWSP) contributions are at 11% employee / 13% employer. SOCSO contributions are deducted automatically. For payroll queries contact payroll@petraenergy.com.my or ext. 2210.'})"><div class="ql-icon">💰</div><span class="ql-lbl">Payslip &amp; EPF/SOCSO</span><span class="ql-arr">›</span></a>
+          <a class="ql-item" href="#" onclick="event.preventDefault();openModal({title:'HSSE Incident Report',tag:'HSSE',tagClass:'',source:'HSSE Division',date:'',img:'',emoji:'🛡',excerpt:'All incidents, near-misses, and unsafe conditions must be reported immediately. For life-threatening emergencies call the 24-hour HSSE Hotline: +60 3-2166 8888. For non-emergency reporting use the HSSE Incident Report Form (HSSE-F-001) available from HSSE Division or the Documents page. Initial report within 1 hour; full investigation within 5 working days.'})"><div class="ql-icon">🛡</div><span class="ql-lbl">HSSE Incident Report</span><span class="ql-arr">›</span></a>
+          <a class="ql-item" href="#" onclick="event.preventDefault();openModal({title:'PR / PO Approval (SAP)',tag:'Procurement',tagClass:'amber',source:'Supply Chain',date:'',img:'',emoji:'📦',excerpt:'All purchase requisitions (PR) above RM 500 must be raised in SAP. Log in to SAP with your user ID and go to MM → Purchase Requisition → Create. PRs are routed automatically to your approver based on value thresholds. For SAP access issues contact the IT Helpdesk at ext. 2500 or helpdesk@petraenergy.com.my.'})"><div class="ql-icon">📦</div><span class="ql-lbl">PR / PO Approval (SAP)</span><span class="ql-arr">›</span></a>
+          <a class="ql-item" href="#" onclick="event.preventDefault();openModal({title:'Travel & Expense Claims',tag:'Finance',tagClass:'amber',source:'Finance Division',date:'',img:'',emoji:'✈️',excerpt:'Submit business travel and expense claims via SAP Concur within 14 days of return. Attach all original receipts. Per diem rates: Domestic RM 120/day, International varies by destination. Claims above RM 5,000 require Division Head approval. For queries contact finance@petraenergy.com.my or ext. 2300.'})"><div class="ql-icon">✈️</div><span class="ql-lbl">Travel &amp; Expense Claims</span><span class="ql-arr">›</span></a>
+          <a class="ql-item" href="#" onclick="event.preventDefault();switchPage('documents')"><div class="ql-icon">📚</div><span class="ql-lbl">Document Management</span><span class="ql-arr">›</span></a>
+          <a class="ql-item" href="#" onclick="event.preventDefault();openModal({title:'Training & Certification',tag:'HR',tagClass:'green',source:'HR Learning & Development',date:'',img:'',emoji:'🎓',excerpt:'Each employee is entitled to a minimum of 40 training hours per year. To nominate for training, complete the Training Nomination Form (HR-F-008) and obtain HoD approval — submit at least 2 weeks before the training date. For professional certification sponsorship (Grade 5+) contact learning@petraenergy.com.my or ext. 2250.'})"><div class="ql-icon">🎓</div><span class="ql-lbl">Training &amp; Certification</span><span class="ql-arr">›</span></a>
         </div>
       </div>
     </div>
@@ -731,7 +836,60 @@ function animateBars(){
 }
 const hsseSec=document.querySelector('.hsse-kpis');
 const io=new IntersectionObserver(entries=>{if(entries[0].isIntersecting){animateCounters();animateBars();io.disconnect();}},{threshold:.3});
-io.observe(hsseSec);
+if(hsseSec) io.observe(hsseSec);
+else { animateCounters(); animateBars(); }
+
+// ── PAGE NAVIGATION ──
+const ALL_SECTIONS=['sec-news','sec-gallery','sec-hsse','sec-policies','sec-hr','sec-projects','sec-documents','sec-calendar'];
+const PAGE_MAP={
+  home:    ['sec-news','sec-gallery','sec-hsse','sec-policies'],
+  news:    ['sec-news'],
+  industry:['sec-news'],
+  hsse:    ['sec-hsse'],
+  gallery: ['sec-gallery'],
+  policies:['sec-policies'],
+  hr:      ['sec-hr'],
+  projects:['sec-projects'],
+  documents:['sec-documents'],
+  calendar:['sec-calendar'],
+};
+const FULL_WIDTH=['hr','projects','documents','calendar'];
+
+function switchPage(page){
+  try{
+    // nav highlight
+    document.querySelectorAll('.nav-item').forEach(function(el){
+      el.classList.toggle('active', el.getAttribute('data-page')===page);
+    });
+    // show/hide sections
+    var show=PAGE_MAP[page]||['sec-news'];
+    ALL_SECTIONS.forEach(function(id){
+      var el=document.getElementById(id);
+      if(el) el.style.display=show.indexOf(id)>=0?'':'none';
+    });
+    // sidebar
+    var sidebar=document.querySelector('.sidebar-col');
+    var contentCol=document.querySelector('.content-col');
+    if(FULL_WIDTH.indexOf(page)>=0){
+      if(sidebar) sidebar.style.display='none';
+      if(contentCol) contentCol.style.gridColumn='1/-1';
+    } else {
+      if(sidebar) sidebar.style.display='';
+      if(contentCol) contentCol.style.gridColumn='';
+    }
+    // news tab switching
+    if(page==='industry'){
+      document.querySelectorAll('.news-tab').forEach(function(t){t.classList.remove('active');});
+      var ogTab=document.querySelector('.news-tab[data-tab="og"]');
+      if(ogTab){ogTab.classList.add('active');currentTab='og';renderFeedNews('og',false);startAutoRefresh();}
+    } else if(page==='news'){
+      document.querySelectorAll('.news-tab').forEach(function(t){t.classList.remove('active');});
+      var petraTab=document.querySelector('.news-tab[data-tab="petra"]');
+      if(petraTab){petraTab.classList.add('active');currentTab='petra';renderPetraNews();}
+    }
+    window.scrollTo(0,0);
+  }catch(e){alert('switchPage error: '+e.message);}
+}
 
 // ── NEWS CONFIG ──
 const PROXIES=[
@@ -947,345 +1105,26 @@ async function loadTicker(){
 }
 loadTicker();
 setInterval(loadTicker,600000);
-
-// ════════════════════════════════════════════════════
-//  SHAREPOINT INTEGRATION
-//  ── Fill in the 3 lines below, then redeploy ──
-// ════════════════════════════════════════════════════
-const SP_CONFIG = {
-  clientId:    'PASTE_CLIENT_ID_HERE',       // from IT / Azure AD
-  tenantId:    'PASTE_TENANT_ID_HERE',       // from IT / Azure AD
-  siteUrl:     'PASTE_YOUR_SHAREPOINT_SITE_URL_HERE', // e.g. https://petraenergy.sharepoint.com/sites/intranet
+</script>
+<script>
+/* navigation — kept separate so a parse error in the main script can't break it */
+var _SECS=['sec-news','sec-gallery','sec-hsse','sec-policies','sec-hr','sec-projects','sec-documents','sec-calendar'];
+var _PMAP={home:['sec-news','sec-gallery','sec-hsse','sec-policies'],news:['sec-news'],industry:['sec-news'],hsse:['sec-hsse'],gallery:['sec-gallery'],policies:['sec-policies'],hr:['sec-hr'],projects:['sec-projects'],documents:['sec-documents'],calendar:['sec-calendar']};
+var _FW=['hr','projects','documents','calendar'];
+window.switchPage=function(page){
+  try{
+    document.querySelectorAll('.nav-item').forEach(function(el){el.classList.toggle('active',el.getAttribute('data-page')===page);});
+    var show=_PMAP[page]||['sec-news'];
+    _SECS.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display=show.indexOf(id)>=0?'':'none';});
+    var sb=document.querySelector('.sidebar-col'),cc=document.querySelector('.content-col');
+    if(_FW.indexOf(page)>=0){if(sb)sb.style.display='none';if(cc)cc.style.gridColumn='1/-1';}
+    else{if(sb)sb.style.display='';if(cc)cc.style.gridColumn='';}
+    window.scrollTo(0,0);
+    var ind=document.getElementById('_pageInd');
+    if(ind)ind.textContent='Page: '+page;
+  }catch(e){alert('nav error: '+e.message);}
 };
-// ════════════════════════════════════════════════════
-
-const SP_SCOPES = ['Sites.Read.All','Calendars.Read','User.Read'];
-let msalApp = null;
-let spAccount = null;
-let spSiteId  = null;
-const GRAPH   = 'https://graph.microsoft.com/v1.0';
-
-// ── inject connect button into welcome bar ──
-(function injectConnectBtn(){
-  const wr = document.querySelector('.w-right');
-  if(!wr) return;
-  const div = document.createElement('div');
-  div.innerHTML = `
-    <div class="w-divider"></div>
-    <div id="spConnectWrap" style="display:flex;align-items:center;gap:8px;">
-      <div id="spStatus" style="font-size:11px;color:rgba(255,255,255,.75);white-space:nowrap;">SharePoint: Not connected</div>
-      <button id="spBtn" onclick="spToggle()" style="background:rgba(255,255,255,.18);border:1.5px solid rgba(255,255,255,.4);color:#fff;font-size:11px;font-weight:700;padding:4px 12px;border-radius:12px;cursor:pointer;white-space:nowrap;">Connect</button>
-    </div>`;
-  wr.appendChild(div.firstElementChild);
-  wr.appendChild(div.lastElementChild);
-})();
-
-// ── inject SharePoint sections into sidebar and content ──
-(function injectSPSections(){
-  // SP Announcements widget in sidebar (before quick links)
-  const ql = document.querySelector('.sidebar-col .widget:last-child');
-  if(ql){
-    const w = document.createElement('div');
-    w.id = 'spAnnouncementsWidget';
-    w.style.display = 'none';
-    w.innerHTML = `
-      <div class="widget">
-        <div class="w-hdr"><span class="w-title">📢 Announcements</span><a class="w-more" href="#">View all →</a></div>
-        <div class="w-body" id="spAnnList"><div style="font-size:12px;color:var(--text-muted);text-align:center;padding:10px;">Loading…</div></div>
-      </div>`;
-    ql.parentNode.insertBefore(w.firstElementChild, ql);
-  }
-
-  // SP Projects widget
-  const hsse = document.querySelector('.hsse-kpis');
-  if(hsse){
-    const sec = document.createElement('div');
-    sec.id = 'spProjectsSection';
-    sec.style.display='none';
-    sec.className = 'sec';
-    sec.innerHTML = `
-      <div class="sec-hdr"><span class="sec-title">🏗️ Active Projects</span><a class="sec-more" href="#">View all →</a></div>
-      <div id="spProjectsGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;"></div>`;
-    hsse.closest('.sec').before(sec);
-  }
-})();
-
-// ── MSAL init ──
-function initMsal(){
-  if(SP_CONFIG.clientId==='PASTE_CLIENT_ID_HERE') return false;
-  try{
-    msalApp = new msal.PublicClientApplication({
-      auth:{ clientId:SP_CONFIG.clientId, authority:`https://login.microsoftonline.com/${SP_CONFIG.tenantId}`, redirectUri: window.location.href.split('?')[0] },
-      cache:{ cacheLocation:'localStorage', storeAuthStateInCookie:true }
-    });
-    return true;
-  }catch(e){ console.error('MSAL init failed',e); return false; }
-}
-
-async function spToggle(){
-  if(spAccount){ spSignOut(); return; }
-  spSignIn();
-}
-
-async function spSignIn(){
-  if(!initMsal()){ alert('SharePoint not configured yet.\n\nAsk your IT admin for the Client ID and Tenant ID, then open portal.html in a text editor and paste them into the SP_CONFIG section at the bottom of the file.'); return; }
-  setSpStatus('Connecting…','rgba(255,255,255,.75)');
-  try{
-    const resp = await msalApp.loginPopup({ scopes: SP_SCOPES });
-    spAccount = resp.account;
-    setSpStatus('Connected — '+spAccount.name.split(' ')[0],'#7FE8A0');
-    document.getElementById('spBtn').textContent = 'Disconnect';
-    await loadAllSPData();
-  }catch(e){
-    setSpStatus('Connection failed','#FFB3B3');
-    console.error(e);
-  }
-}
-
-function spSignOut(){
-  if(msalApp && spAccount) msalApp.logout({ account: spAccount });
-  spAccount = null; spSiteId = null;
-  setSpStatus('Not connected','rgba(255,255,255,.75)');
-  document.getElementById('spBtn').textContent = 'Connect';
-  document.getElementById('spAnnouncementsWidget').style.display='none';
-  document.getElementById('spProjectsSection').style.display='none';
-}
-
-function setSpStatus(msg,color){
-  const el=document.getElementById('spStatus');
-  if(el){el.textContent='SharePoint: '+msg;el.style.color=color||'rgba(255,255,255,.75)';}
-}
-
-async function getToken(){
-  if(!msalApp||!spAccount) return null;
-  try{
-    const r = await msalApp.acquireTokenSilent({ scopes:SP_SCOPES, account:spAccount });
-    return r.accessToken;
-  }catch(e){
-    try{
-      const r = await msalApp.acquireTokenPopup({ scopes:SP_SCOPES });
-      return r.accessToken;
-    }catch(e2){ return null; }
-  }
-}
-
-async function graphGet(path){
-  const token = await getToken();
-  if(!token) return null;
-  const res = await fetch(GRAPH+path,{ headers:{ Authorization:'Bearer '+token }});
-  if(!res.ok) throw new Error(res.status+' '+path);
-  return res.json();
-}
-
-// ── resolve site ID from URL ──
-async function getSiteId(){
-  if(spSiteId) return spSiteId;
-  const url = new URL(SP_CONFIG.siteUrl);
-  const host = url.hostname;
-  const path = url.pathname.replace(/\/$/, '');
-  const data = await graphGet(`/sites/${host}:${path}`);
-  spSiteId = data?.id;
-  return spSiteId;
-}
-
-// ── load everything ──
-async function loadAllSPData(){
-  setSpStatus('Syncing…','#FFDD80');
-  try{
-    await Promise.all([
-      loadSPNews(),
-      loadSPAnnouncements(),
-      loadSPCalendar(),
-      loadSPProjects(),
-      loadSPDocuments(),
-    ]);
-    setSpStatus('Connected — '+spAccount.name.split(' ')[0],'#7FE8A0');
-    // auto-refresh SP data every 5 minutes
-    setInterval(loadAllSPData, 300000);
-  }catch(e){
-    console.error('SP load error',e);
-    setSpStatus('Partial sync — check console','#FFDD80');
-  }
-}
-
-// ── SP NEWS → Petra News tab ──
-async function loadSPNews(){
-  const siteId = await getSiteId();
-  if(!siteId) return;
-  // try site pages (SharePoint News)
-  const data = await graphGet(`/sites/${siteId}/pages?$orderby=lastModifiedDateTime desc&$top=6`);
-  const pages = data?.value?.filter(p=>p.promotedState===2||p['@odata.type']==='#microsoft.graph.sitePage');
-  if(!pages?.length) return;
-
-  const items = pages.slice(0,6).map(p=>({
-    title: p.title||p.name,
-    link: p.webUrl||'#',
-    pubDate: p.lastModifiedDateTime||p.createdDateTime,
-    description: p.description||'',
-    img: p.thumbnailWebUrl||p.bannerImageWebUrl||'',
-    source: 'Petra SharePoint',
-    tag: 'Latest',
-    tagClass: '',
-  }));
-
-  // update Petra News tab if currently active
-  if(currentTab==='petra'){
-    const grid = document.getElementById('tileGrid');
-    grid.style.opacity='0';
-    setTimeout(()=>{
-      grid.innerHTML = items.map((item,i)=>tileHTML(item,i,item.tag,item.tagClass,item.source)).join('');
-      grid.style.transition='opacity .4s';grid.style.opacity='1';
-    },200);
-  }
-  // cache for tab switching
-  window._spNewsItems = items;
-}
-
-// ── SP ANNOUNCEMENTS → sidebar widget ──
-async function loadSPAnnouncements(){
-  const siteId = await getSiteId();
-  if(!siteId) return;
-  // look for a list named Announcements
-  const lists = await graphGet(`/sites/${siteId}/lists?$filter=displayName eq 'Announcements'`);
-  const listId = lists?.value?.[0]?.id;
-  if(!listId) return;
-
-  const items = await graphGet(`/sites/${siteId}/lists/${listId}/items?$expand=fields&$orderby=fields/Created desc&$top=5`);
-  if(!items?.value?.length) return;
-
-  const widget = document.getElementById('spAnnouncementsWidget');
-  const list   = document.getElementById('spAnnList');
-  if(!widget||!list) return;
-
-  const icons=['📌','📋','📣','🔔','📢'];
-  list.innerHTML = items.value.map((item,i)=>{
-    const f=item.fields;
-    return `<div class="cal-ev" style="margin-bottom:6px;" onclick="openModal({title:'${esc(f.Title)}',tag:'Announcement',tagClass:'',source:'SharePoint',date:'${timeAgo(f.Created)}',img:'',emoji:'${icons[i%5]}',excerpt:'${esc(f.Body||f.Description||'')}',link:'${esc(item.webUrl||'#')}'})">
-      <div class="cal-dot"></div>
-      <div>
-        <div class="cal-ev-text">${f.Title||'Announcement'}</div>
-        <div class="cal-ev-date">${timeAgo(f.Created)}</div>
-      </div>
-    </div>`;
-  }).join('');
-  widget.style.display='block';
-}
-
-// ── SP CALENDAR → sidebar calendar events ──
-async function loadSPCalendar(){
-  const token = await getToken();
-  if(!token) return;
-  const now = new Date().toISOString();
-  const future = new Date(Date.now()+60*86400000).toISOString();
-  const data = await graphGet(`/me/calendar/events?$filter=start/dateTime ge '${now}' and start/dateTime le '${future}'&$orderby=start/dateTime&$top=8&$select=subject,start,end,location,bodyPreview,webLink`);
-  if(!data?.value?.length) return;
-
-  const calEvDiv = document.querySelector('.cal-events');
-  if(!calEvDiv) return;
-  calEvDiv.innerHTML = data.value.map(ev=>{
-    const d=new Date(ev.start.dateTime);
-    const day=d.getDate(), mon=MONTHS[d.getMonth()].slice(0,3);
-    return `<div class="cal-ev" onclick="openModal({title:'${esc(ev.subject)}',tag:'Calendar',tagClass:'blue',source:'Outlook Calendar',date:'${day} ${mon}',img:'',emoji:'📅',excerpt:'${esc(ev.bodyPreview||'')}',link:'${esc(ev.webLink||'#')}'})">
-      <div class="cal-dot"></div>
-      <div>
-        <div class="cal-ev-text">${ev.subject}</div>
-        <div class="cal-ev-date">${day} ${mon}${ev.location?.displayName?' · '+ev.location.displayName:''}</div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-// ── SP PROJECTS LIST → Projects section ──
-async function loadSPProjects(){
-  const siteId = await getSiteId();
-  if(!siteId) return;
-  const lists = await graphGet(`/sites/${siteId}/lists?$filter=displayName eq 'Projects'`);
-  const listId = lists?.value?.[0]?.id;
-  if(!listId) return;
-
-  const items = await graphGet(`/sites/${siteId}/lists/${listId}/items?$expand=fields&$top=6`);
-  if(!items?.value?.length) return;
-
-  const sec  = document.getElementById('spProjectsSection');
-  const grid = document.getElementById('spProjectsGrid');
-  if(!sec||!grid) return;
-
-  const statusColor={Active:'#1A7A3C',Completed:'#1A4A8C','On Hold':'#A85A00',default:'#888'};
-  grid.innerHTML = items.value.map(item=>{
-    const f=item.fields;
-    const status=f.Status||f.ProjectStatus||'Active';
-    const sc=statusColor[status]||statusColor.default;
-    return `<div class="pol-tile" onclick="openModal({title:'${esc(f.Title)}',tag:'Project',tagClass:'blue',source:'SharePoint Projects',date:'${esc(f.Modified||'')}',img:'',emoji:'🏗️',excerpt:'${esc(f.Description||f.Body||'')}',link:'#'})">
-      <div class="pol-icon">🏗️</div>
-      <div>
-        <div class="pol-name">${f.Title||'Project'}</div>
-        <div class="pol-ver" style="display:flex;align-items:center;gap:6px;margin-top:4px;">
-          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${sc};flex-shrink:0;"></span>
-          <span>${status}</span>
-          ${f.DueDate?`<span>· Due ${new Date(f.DueDate).toLocaleDateString('en-MY',{day:'numeric',month:'short'})}</span>`:''}
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-  sec.style.display='block';
-}
-
-// ── SP DOCUMENTS → Policies section ──
-async function loadSPDocuments(){
-  const siteId = await getSiteId();
-  if(!siteId) return;
-  // try a library called Policies or Documents
-  const libs = await graphGet(`/sites/${siteId}/lists?$filter=displayName eq 'Policies' or displayName eq 'Policy Documents'`);
-  const libId = libs?.value?.[0]?.id;
-  if(!libId) return;
-
-  const items = await graphGet(`/sites/${siteId}/lists/${libId}/items?$expand=fields&$top=6&$orderby=fields/Modified desc`);
-  if(!items?.value?.length) return;
-
-  const polGrid = document.querySelector('.pol-grid');
-  if(!polGrid) return;
-
-  const icons=['📄','🛡','📋','🔒','🌿','📦'];
-  polGrid.innerHTML = items.value.map((item,i)=>{
-    const f=item.fields;
-    const modified=f.Modified?new Date(f.Modified).toLocaleDateString('en-MY',{day:'numeric',month:'short',year:'numeric'}):'';
-    const isNew=f.Modified&&(Date.now()-new Date(f.Modified))<30*86400000;
-    return `<div class="pol-tile" onclick="window.open('${item.webUrl||'#'}','_blank')">
-      <div class="pol-icon">${icons[i%6]}</div>
-      <div>
-        <div class="pol-name">${f.Title||f.FileLeafRef||'Document'}${isNew?'<span class="pol-new">NEW</span>':''}</div>
-        <div class="pol-ver">Updated ${modified}</div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-// ── helper: safe string for onclick attrs ──
-function esc(s){ return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,' ').slice(0,300); }
-
-// ── patch tab click to use SP news if available ──
-const _origTabClick = document.querySelectorAll('.news-tab');
-_origTabClick.forEach(tab=>{
-  tab.addEventListener('click',()=>{
-    if(tab.dataset.tab==='petra' && window._spNewsItems?.length){
-      document.getElementById('tileGrid').innerHTML=window._spNewsItems.map((item,i)=>tileHTML(item,i,item.tag,item.tagClass,item.source)).join('');
-      document.getElementById('tileGrid').style.opacity='1';
-    }
-  });
-});
-
-// ── auto-reconnect on page load if previously signed in ──
-window.addEventListener('load',()=>{
-  if(SP_CONFIG.clientId==='PASTE_CLIENT_ID_HERE') return;
-  if(!initMsal()) return;
-  const accounts = msalApp.getAllAccounts();
-  if(accounts.length){
-    spAccount = accounts[0];
-    setSpStatus('Connected — '+spAccount.name.split(' ')[0],'#7FE8A0');
-    document.getElementById('spBtn').textContent='Disconnect';
-    loadAllSPData();
-  }
-});
+window.openModal=window.openModal||function(){};
 </script>
 </body>
 </html>
